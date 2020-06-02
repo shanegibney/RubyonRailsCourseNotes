@@ -5,75 +5,145 @@
 ### Course content
 
 [1.Installing Homebrew on Mac](#1InstallingHomebrewonMac)
+
 [2.Install Ruby  Setup Postgres Database](#2InstallRubySetupPostgresDatabase)
+
 [3.Install Ruby on Rails + Resources](#3InstallRubyonRails+Resources)
+
 [4.Using Terminal to Create Our First Ruby File](#4UsingTerminaltoCreateOurFirstRubyFile)
+
 [5.Strings, Integers and Variables](#5Strings,IntegersandVariables)
+
 [6.String Interpolation and Type Casting](#6StringInterpolationandTypeCasting)
+
 [7.Arrays and Loops](#7ArraysandLoops)
+
 [8.Creating a Ruby Method](#8CreatingaRubyMethod)
+
 [9.Ruby Classes and Objects](#9RubyClassesandObjects)
+
 [10.Collecting User Input from the Console](#10CollectingUserInputfromtheConsole)
+
 [11.Creating a new rails application](#11Creatinganewrailsapplication)
+
 [12.Intro to Rails Server  Localhost](#12IntrotoRailsServerLocalhost)
+
 [13.Creating our Home Page](#13CreatingourHomePage)
+
 [14.Version Control using Git](#14VersionControlusingGit)
+
 [15.Database Setup - Installing PostgreSQL](#15DatabaseSetup-InstallingPostgreSQL)
+
 [16.Installing the Postgres Gem](#16InstallingthePostgresGem)
+
 [17.Creating our Database and Schema](#17CreatingourDatabaseandSchema)
+
 [18.Generating Rails Scaffolding](#18GeneratingRailsScaffolding)
+
 [19.Running our first Database Migration](#19RunningourfirstDatabaseMigration)
+
 [20.Adding  Editing  Deleting from the browser](#20Adding/Editing/Deletingfromthebrowser)
+
 [21.Pros and Cons of Scaffolding](#21ProsandConsofScaffolding)
+
 [22.Adding a new Controller from Command Line](#22AddinganewControllerfromCommandLine)
+
 [23.Adding an action to a Controller](#23AddinganactiontoaController)
+
 [24.Passing data from action to views](#24Passingdatafromactiontoviews)
+
 [25.Using Conditions Within Controllers](#25UsingConditionsWithinControllers)
+
 [26.Logging data to the Rails Server](#26LoggingdatatotheRailsServer)
+
 [27.Adding Redirects to Actions](#27AddingRedirectstoActions)
+
 [28.Adding Flash Data to Show Success  Error Messages](#28AddingFlashDatatoShowSuccess/ErrorMessages)
+
 [29.Before Filters](#29BeforeFilters)
+
 [30.Destroying Controllers in Command Line](#30DestroyingControllersinCommandLine)
+
 [31.Cleaning Up Our Posts Controller](#31CleaningUpOurPostsController)
+
 [32.Views Folder Structure and File Types](#32ViewsFolderStructureandFileTypes)
+
 [33.Bootstrap and Creating Our First Partial](#33BootstrapandCreatingOurFirstPartial)
+
 [34.Displaying Blog Post Entries](#34DisplayingBlogPostEntries)
+
 [35.Adding Page Navigation View](#35AddingPageNavigationView)
+
 [36.Partials and Local Variables](#36PartialsandLocalVariables)
+
 [37.Using content_for in layouts](#37Usingcontent_forinlayouts)
+
 [38.Common Mistakes with Views - Missing Template](#38CommonMistakeswithViews-MissingTemplate)
+
 [39.Styling our Homepage View](#39StylingourHomepageView)
+
 [40.Generating a New Model](#40GeneratingaNewModel)
+
 [41.ActiveRecord Validations](#41ActiveRecordValidations)
+
 [42.Adding a New Model Method](#42AddingaNewModelMethod)
+
 [43.Class Methods vs Instance Methods](#43ClassMethodsvsInstanceMethods)
+
 [44.Active Record Associations](#44ActiveRecordAssociations)
+
 [45.Active Record Callbacks](#45ActiveRecordCallbacks)
+
 [46.Scopes and Scope Chaining](#46ScopesandScopeChaining)
+
 [47.Accessing the Rails Console  Sandbox Mode](#47AccessingtheRailsConsole/SandboxMode)
+
 [48.Active Record Queries](#48ActiveRecordQueries)
+
 [49.Creating New Database Entries from Rails Console](#49CreatingNewDatabaseEntriesfromRailsConsole)
+
 [50.Editing and Destroying Database Entries](#50EditingandDestroyingDatabaseEntries)
+
 [51.Asset Pipline, Webpacker and Yarn](#51AssetPipline,WebpackerandYarn)
+
 [52.Images and Asset Urls](#52ImagesandAssetUrls)
+
 [53.Custom Helper Methods and Views](#53CustomHelperMethodsandViews)
+
 [54.Creating Custom Forms](#54CreatingCustomForms)
+
 [55.Custom JS and Remote Forms](#55CustomJSandRemoteForms)
+
 [56.Data Formats and Strong Parameters](#56DataFormatsandStrongParameters)
+
 [57.Helper for Form Validation Messages](#57HelperforFormValidationMessages)
+
 [58.Creating a New Migration](#58CreatingaNewMigration)
+
 [59.Adding  Removing Columns in Tables](#59Adding/RemovingColumnsinTables)
+
 [60.Rename a Database Table and Column](#60RenameaDatabaseTableandColumn)
+
 [61.Rolling Back a Migration](#61RollingBackaMigration)
+
 [62.Installing the Devise Gem](#62InstallingtheDeviseGem)
+
 [63.Setting up Devise Views](#63SettingupDeviseViews)
+
 [64.Create Devise Model](#64CreateDeviseModel)
+
 [65.Adding Columns to a Devise Table](#65AddingColumnstoaDeviseTable)
+
 [66.Drop Admins Table Migration](#66DropAdminsTableMigration)
+
 [67.Styling Devise Forms and Adding Sign In and Sign Out Links](#67StylingDeviseFormsandAddingSignInandSignOutLinks)
+
 [68.Extending Our Devise Registration Form](#68ExtendingOurDeviseRegistrationForm)
+
 [69.Connecting User Accounts to Blog Posts](#69ConnectingUserAccountstoBlogPosts)
+
 [70.Adding Permissions to Blog Posts](#70AddingPermissionstoBlogPosts)
+
 [71.Showing Author on Posts View](#71ShowingAuthoronPostsView)
 
 ## Ruby on Rails Udemy Course Notes
