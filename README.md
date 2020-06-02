@@ -152,43 +152,37 @@
 
 ### Course content
 
-## Ruby on Rails Udemy Course Notes
-
-[Udemy Ruby on Rails 6 course](https://www.udemy.com/course/complete-beginners-course-for-ruby-on-rails-6/learn/lecture/16532898?start=0#overview)
-
-### Course content
-
 ### Section 1: Installing Ruby on Rails 6
 9min
 
-1. <a name="1<aname="InstallingHomebrewonMac">InstallingHomebrewonMac</a>"><a name="InstallingHomebrewonMac">Installing Homebrew on Mac</a></a>
+1. <a name="InstallingHomebrewonMac">Installing Homebrew on Mac</a>
 2min
 
-2. <a name="2InstallRuby&SetupPostgresDatabase">Install Ruby & Setup Postgres Database</a>
+2. <a name="InstallRubySetupPostgresDatabase">Install Ruby  Setup Postgres Database</a>
 3min
 
-3. <a name="3InstallRubyonRails+Resources">Install Ruby on Rails + Resources</a>
+3. <a name="InstallRubyonRails+Resources">Install Ruby on Rails + Resources</a>
 4min
 
 ### Section 2: Ruby Basics - The Essentials
 20min
 
-4. <a name="4UsingTerminaltoCreateOurFirstRubyFile">Using Terminal to Create Our First Ruby File</a>
+4. <a name="UsingTerminaltoCreateOurFirstRubyFile">Using Terminal to Create Our First Ruby File</a>
 3min
 
-5. <a name="5Strings,IntegersandVariables">Strings, Integers and Variables</a>
+5. <a name="StringsIntegersandVariables">Strings Integers and Variables</a>
 2min
 
-6. <a name="6StringInterpolationandTypeCasting">String Interpolation and Type Casting</a>
+6. <a name="StringInterpolationandTypeCasting">String Interpolation and Type Casting</a>
 2min
 
-7. <a name="7ArraysandLoops">Arrays and Loops</a>
+7. <a name="ArraysandLoops">Arrays and Loops</a>
 3min
 
-8. <a name="8CreatingaRubyMethod">Creating a Ruby Method</a>
+8. <a name="CreatingaRubyMethod">Creating a Ruby Method</a>
 2min
 
-9. <a name="9RubyClassesandObjects">Ruby Classes and Objects</a>
+9. <a name="RubyClassesandObjects">Ruby Classes and Objects</a>
 4min
 
 10. <a name="CollectingUserInputfromtheConsole">Collecting User Input from the Console</a>
@@ -200,7 +194,7 @@
 11. <a name="Creatinganewrailsapplication">Creating a new rails application</a>
 2min
 
-12. <a name="IntrotoRailsServer&Localhost">Intro to Rails Server & Localhost</a>
+12. <a name="IntrotoRailsServerLocalhost">Intro to Rails Server  Localhost</a>
 2min
 
 13. <a name="CreatingourHomePage">Creating our Home Page</a>
@@ -335,7 +329,7 @@
 ### Section 9: Managing Assets, Views and Helpers
 35min
 
-51. <a name="AssetPipline,WebpackerandYarn">Asset Pipline, Webpacker and Yarn</a>
+51. <a name="AssetPiplineWebpackerandYarn">Asset Pipline Webpacker and Yarn</a>
 5min
 
 52. <a name="ImagesandAssetUrls">Images and Asset Urls</a>
