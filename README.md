@@ -4,11 +4,15 @@
 
 ### Course content
 
+### Section 1: Installing Ruby on Rails 6
+
 [1. Installing Homebrew on Mac](#InstallingHomebrewonMac)
 
 [2. Install Ruby  Setup Postgres Database](#InstallRubySetupPostgresDatabase)
 
 [3. Install Ruby on Rails + Resources](#InstallRubyonRails+Resources)
+
+### Section 2: Ruby Basics - The Essentials
 
 [4. Using Terminal to Create Our First Ruby File](#UsingTerminaltoCreateOurFirstRubyFile)
 
@@ -24,6 +28,8 @@
 
 [10. Collecting User Input from the Console](#CollectingUserInputfromtheConsole)
 
+### Section 3: Creating our first Rails Project
+
 [11. Creating a new rails application](#Creatinganewrailsapplication)
 
 [12. Intro to Rails Server  Localhost](#IntrotoRailsServerLocalhost)
@@ -38,6 +44,8 @@
 
 [17. Creating our Database and Schema](#CreatingourDatabaseandSchema)
 
+### Section 4: Introduction to Scaffolding
+
 [18. Generating Rails Scaffolding](#GeneratingRailsScaffolding)
 
 [19. Running our first Database Migration](#RunningourfirstDatabaseMigration)
@@ -45,6 +53,8 @@
 [20. Adding  Editing  Deleting from the browser](#Adding/Editing/Deletingfromthebrowser)
 
 [21. Pros and Cons of Scaffolding](#ProsandConsofScaffolding)
+
+### Section 5: Intro to Controllers and Routes
 
 [22. Adding a new Controller from Command Line](#AddinganewControllerfromCommandLine)
 
@@ -66,6 +76,8 @@
 
 [31. Cleaning Up Our Posts Controller](#CleaningUpOurPostsController)
 
+### Section 6: Working with Views and Partials
+
 [32. Views Folder Structure and File Types](#ViewsFolderStructureandFileTypes)
 
 [33. Bootstrap and Creating Our First Partial](#BootstrapandCreatingOurFirstPartial)
@@ -82,6 +94,8 @@
 
 [39. Styling our Homepage View](#StylingourHomepageView)
 
+### Section 7: Models and Active Record Basics
+
 [40. Generating a New Model](#GeneratingaNewModel)
 
 [41. ActiveRecord Validations](#ActiveRecordValidations)
@@ -96,6 +110,8 @@
 
 [46. Scopes and Scope Chaining](#ScopesandScopeChaining)
 
+### Section 8: Rails Console and Active Record Continued
+
 [47. Accessing the Rails Console  Sandbox Mode](#AccessingtheRailsConsole/SandboxMode)
 
 [48. Active Record Queries](#ActiveRecordQueries)
@@ -103,6 +119,8 @@
 [49. Creating New Database Entries from Rails Console](#CreatingNewDatabaseEntriesfromRailsConsole)
 
 [50. Editing and Destroying Database Entries](#EditingandDestroyingDatabaseEntries)
+
+### Section 9: Managing Assets, Views and Helpers
 
 [51. Asset Pipline Webpacker and Yarn](#AssetPiplineWebpackerandYarn)
 
@@ -118,6 +136,8 @@
 
 [57. Helper for Form Validation Messages](#HelperforFormValidationMessages)
 
+### Section 10: Mastering Database Migrations
+
 [58. Creating a New Migration](#CreatingaNewMigration)
 
 [59. Adding  Removing Columns in Tables](#Adding/RemovingColumnsinTables)
@@ -125,6 +145,8 @@
 [60. Rename a Database Table and Column](#RenameaDatabaseTableandColumn)
 
 [61. Rolling Back a Migration](#RollingBackaMigration)
+
+### Section 11: User Authentication
 
 [62. Installing the Devise Gem](#InstallingtheDeviseGem)
 
