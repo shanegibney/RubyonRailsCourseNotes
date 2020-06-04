@@ -467,9 +467,32 @@ $ rail s
 ### 13. <a name="CreatingourHomePage">Creating our Home Page</a>
 4min
 
+Go to rails-app/config/routes.rb and create a default route for the application. Here we use the "root to" syntax and "public" is the name of the controller and "homepage" the method or action within that controller.
 
+```
+root to: "public#homepage"
+```
 
-Go to rails-app/config/routes.rb
+We need ro create a new controller. Create a file app/controllers/public_controller.rb This will be a class which will inherit from ApplicationController
+
+```
+class PublicController < ApplicationController
+  def homepage
+
+  end
+end
+```
+This is how we create a controller called public, by making a file public_controllers.rb in app/controllers
+
+We add the method or action to this class 'homepage' which will call the views from the view folder where we will have a view folder that matches called 'public'. What matches public? So create a folder in views called public and a file inside that with the same name as the action 'homepage'  app/views/public/homepage.html.erb where erb or embedded Ruby is the default templating engine used in Rails.  
+
+app/views/public/homepage.html.erb
+
+```
+<h1>Hi I am a test</h1>
+<hr>
+```
+See this render in the browser by navigating to localhost:3000
 
 ### 14. <a name="VersionControlusingGit">Version Control using Git</a>
 2min
