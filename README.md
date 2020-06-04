@@ -445,8 +445,29 @@ rails new --help
 ### 12. <a name="IntrotoRailsServerLocalhost">Intro to Rails Server  Localhost</a>
 2min
 
+To ceate a new rails app called rails-app
+
+```
+$ rails new rails-app
+$ cd rails-app
+```
+
+To run server
+
+```
+$ rails server
+```
+
+The shortcut for this
+
+```
+$ rail s
+```
+
 ### 13. <a name="CreatingourHomePage">Creating our Home Page</a>
 4min
+
+
 
 Go to rails-app/config/routes.rb
 
@@ -492,10 +513,10 @@ Go to rails-app/config/routes.rb
 ### 25. <a name="UsingConditionsWithinControllers">Using Conditions Within Controllers</a>
 2min
 
-26. <a name="LoggingdatatotheRailsServer">Logging data to the Rails Server</a>
+### 26. <a name="LoggingdatatotheRailsServer">Logging data to the Rails Server</a>
 2min
 
-27. <a name="AddingRedirectstoActions">Adding Redirects to Actions</a>
+### 27. <a name="AddingRedirectstoActions">Adding Redirects to Actions</a>
 3min
 
 ### 28. <a name="AddingFlashDatatoShowSuccess/ErrorMessages">Adding Flash Data to Show Success / Error Messages</a>
@@ -516,7 +537,7 @@ Go to rails-app/config/routes.rb
 ### 32. <a name="ViewsFolderStructureandFileTypes">Views Folder Structure and File Types</a>
 5min
 
-### 3### 3. <a name="BootstrapandCreatingOurFirstPartial">Bootstrap and Creating Our First Partial</a>
+### 33. <a name="BootstrapandCreatingOurFirstPartial">Bootstrap and Creating Our First Partial</a>
 4min
 
 ### 34. <a name="DisplayingBlogPostEntries">Displaying Blog Post Entries</a>
