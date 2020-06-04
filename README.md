@@ -36,10 +36,6 @@
 
 [13. Creating our Home Page](#CreatingourHomePage)
 
-Go to rails-app/config/routes.rb
-
-
-
 [14. Version Control using Git](#VersionControlusingGit)
 
 [15. Database Setup - Installing PostgreSQL](#DatabaseSetup-InstallingPostgreSQL)
@@ -181,7 +177,7 @@ Go to rails-app/config/routes.rb
 ### Section 1: Installing Ruby on Rails 6
 9min
 
-1. <a name="InstallingHomebrewonMac">Installing Homebrew on Mac</a>
+## 1. <a name="InstallingHomebrewonMac">Installing Homebrew on Mac</a>
 2min
 
 Install Homebrew go to Homebrew site
@@ -451,6 +447,8 @@ rails new --help
 
 13. <a name="CreatingourHomePage">Creating our Home Page</a>
 4min
+
+Go to rails-app/config/routes.rb
 
 14. <a name="VersionControlusingGit">Version Control using Git</a>
 2min
