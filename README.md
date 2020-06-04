@@ -1,10 +1,10 @@
-## Ruby on Rails Udemy Course Notes
+# Ruby on Rails Udemy Course Notes
 
 [Udemy Ruby on Rails 6 course](https://www.udemy.com/course/complete-beginners-course-for-ruby-on-rails-6/learn/lecture/16532898?start=0#overview)
 
-### Course content
+# Course content
 
-### Section 1: Installing Ruby on Rails 6
+## Section 1: Installing Ruby on Rails 6
 
 [1. Installing Homebrew on Mac](#InstallingHomebrewonMac)
 
@@ -12,7 +12,7 @@
 
 [3. Install Ruby on Rails + Resources](#InstallRubyonRails+Resources)
 
-### Section 2: Ruby Basics - The Essentials
+## Section 2: Ruby Basics - The Essentials
 
 [4. Using Terminal to Create Our First Ruby File](#UsingTerminaltoCreateOurFirstRubyFile)
 
@@ -28,7 +28,7 @@
 
 [10. Collecting User Input from the Console](#CollectingUserInputfromtheConsole)
 
-### Section 3: Creating our first Rails Project
+## Section 3: Creating our first Rails Project
 
 [11. Creating a new rails application](#Creatinganewrailsapplication)
 
@@ -44,7 +44,7 @@
 
 [17. Creating our Database and Schema](#CreatingourDatabaseandSchema)
 
-### Section 4: Introduction to Scaffolding
+## Section 4: Introduction to Scaffolding
 
 [18. Generating Rails Scaffolding](#GeneratingRailsScaffolding)
 
@@ -54,7 +54,7 @@
 
 [21. Pros and Cons of Scaffolding](#ProsandConsofScaffolding)
 
-### Section 5: Intro to Controllers and Routes
+## Section 5: Intro to Controllers and Routes
 
 [22. Adding a new Controller from Command Line](#AddinganewControllerfromCommandLine)
 
@@ -76,7 +76,7 @@
 
 [31. Cleaning Up Our Posts Controller](#CleaningUpOurPostsController)
 
-### Section 6: Working with Views and Partials
+## Section 6: Working with Views and Partials
 
 [32. Views Folder Structure and File Types](#ViewsFolderStructureandFileTypes)
 
@@ -94,7 +94,7 @@
 
 [39. Styling our Homepage View](#StylingourHomepageView)
 
-### Section 7: Models and Active Record Basics
+## Section 7: Models and Active Record Basics
 
 [40. Generating a New Model](#GeneratingaNewModel)
 
@@ -110,7 +110,7 @@
 
 [46. Scopes and Scope Chaining](#ScopesandScopeChaining)
 
-### Section 8: Rails Console and Active Record Continued
+## Section 8: Rails Console and Active Record Continued
 
 [47. Accessing the Rails Console  Sandbox Mode](#AccessingtheRailsConsole/SandboxMode)
 
@@ -120,7 +120,7 @@
 
 [50. Editing and Destroying Database Entries](#EditingandDestroyingDatabaseEntries)
 
-### Section 9: Managing Assets, Views and Helpers
+## Section 9: Managing Assets, Views and Helpers
 
 [51. Asset Pipline Webpacker and Yarn](#AssetPiplineWebpackerandYarn)
 
@@ -136,7 +136,7 @@
 
 [57. Helper for Form Validation Messages](#HelperforFormValidationMessages)
 
-### Section 10: Mastering Database Migrations
+## Section 10: Mastering Database Migrations
 
 [58. Creating a New Migration](#CreatingaNewMigration)
 
@@ -146,7 +146,7 @@
 
 [61. Rolling Back a Migration](#RollingBackaMigration)
 
-### Section 11: User Authentication
+## Section 11: User Authentication
 
 [62. Installing the Devise Gem](#InstallingtheDeviseGem)
 
@@ -172,17 +172,17 @@
 
 [Udemy Ruby on Rails 6 course](https://www.udemy.com/course/complete-beginners-course-for-ruby-on-rails-6/learn/lecture/16532898?start=0#overview)
 
-### Course content
+# Course
 
-### Section 1: Installing Ruby on Rails 6
+## Section 1: Installing Ruby on Rails 6
 9min
 
-## 1. <a name="InstallingHomebrewonMac">Installing Homebrew on Mac</a>
+### 1. <a name="InstallingHomebrewonMac">Installing Homebrew on Mac</a>
 2min
 
 Install Homebrew go to Homebrew site
 
-2. <a name="InstallRubySetupPostgresDatabase">Install Ruby  Setup Postgres Database</a>
+### 2. <a name="InstallRubySetupPostgresDatabase">Install Ruby  Setup Postgres Database</a>
 3min
 
 Installthe Ruby environment whch is versio manager for Ruby
@@ -199,7 +199,7 @@ $ rbenv global 2.6.3
 
 Next install Postgres because the default sqlite is not ideal for production, so navigate to postgresapp.com and go to downloads. Downlad the latest stable version which is 12 at time of studying this course. Download the .dmg (for Mac) to Appplications. No configuration needed, should work out of the box.
 
-3. <a name="InstallRubyonRails+Resources">Install Ruby on Rails + Resources</a>
+### 3. <a name="InstallRubyonRails+Resources">Install Ruby on Rails + Resources</a>
 4min
 
 WE need rbenv to be added to the .bash_profile file so that our rbenv version of Ruby will load automatically.
@@ -264,13 +264,13 @@ and check current version of rails
 
 $ rails -v
 
-### Section 2: Ruby Basics - The Essentials
+## Section 2: Ruby Basics - The Essentials
 20min
 
-4. <a name="UsingTerminaltoCreateOurFirstRubyFile">Using Terminal to Create Our First Ruby File</a>
+### 4. <a name="UsingTerminaltoCreateOurFirstRubyFile">Using Terminal to Create Our First Ruby File</a>
 3min
 
-5. <a name="StringsIntegersandVariables">Strings Integers and Variables</a>
+### 5. <a name="StringsIntegersandVariables">Strings Integers and Variables</a>
 2min
 
 The 'puts' command returns a string
@@ -279,7 +279,7 @@ The 'puts' command returns a string
 puts "2" + 2  # error cannot add a string and an integer
 ```
 
-6. <a name="StringInterpolationandTypeCasting">String Interpolation and Type Casting</a>
+### 6. <a name="StringInterpolationandTypeCasting">String Interpolation and Type Casting</a>
 2min
 
 To output numbers inside a string use string interploation
@@ -296,7 +296,7 @@ Must use double quotation marks when using string interploation. To use a value 
 puts "My value is #{value1}, value2 is " + value2.to_s # My value is 2, value2 is 6
 ```
 
-7. <a name="ArraysandLoops">Arrays and Loops</a>
+### 7. <a name="ArraysandLoops">Arrays and Loops</a>
 3min
 
 Arrays are used to hold multiple values or variables
@@ -338,7 +338,7 @@ arr.each_with_index do |value, index|
 end
 ```
 
-8. <a name="CreatingaRubyMethod">Creating a Ruby Method</a>
+### 8. <a name="CreatingaRubyMethod">Creating a Ruby Method</a>
 2min
 
 Creating a new method that accepts one parameter
@@ -369,7 +369,7 @@ end
 my_method "Bill" # no value for age parameter given it will revert to default value in method definition
 ```
 
-9. <a name="RubyClassesandObjects">Ruby Classes and Objects</a>
+### 9. <a name="RubyClassesandObjects">Ruby Classes and Objects</a>
 4min
 
 Create a class to wrap the method in. Class name must start with an uppr case letter. The initiliaze method gets run before anything else in the class and the beenefir of that is that it allows us to set variables in the class and use they throughout the class with the other methods. This is similar to a construct in Java/
@@ -403,7 +403,7 @@ person1 = Person.new("James") # parenthesis are optional
 person1.details # Person is called James
 ```
 
-10. <a name="CollectingUserInputfromtheConsole">Collecting User Input from the Console</a>
+### 10. <a name="CollectingUserInputfromtheConsole">Collecting User Input from the Console</a>
 2min
 
 Make the above more interactive.
@@ -430,10 +430,10 @@ person1 = Person.new(name , age) # pass the input variables into the class
 person1.details
 ```
 
-### Section 3: Creating our first Rails Project
+## Section 3: Creating our first Rails Project
 18min
 
-11. <a name="Creatinganewrailsapplication">Creating a new rails application</a>
+### 11. <a name="Creatinganewrailsapplication">Creating a new rails application</a>
 2min
 
 For help
@@ -442,15 +442,15 @@ For help
 rails new --help
 ```
 
-12. <a name="IntrotoRailsServerLocalhost">Intro to Rails Server  Localhost</a>
+### 12. <a name="IntrotoRailsServerLocalhost">Intro to Rails Server  Localhost</a>
 2min
 
-13. <a name="CreatingourHomePage">Creating our Home Page</a>
+### 13. <a name="CreatingourHomePage">Creating our Home Page</a>
 4min
 
 Go to rails-app/config/routes.rb
 
-14. <a name="VersionControlusingGit">Version Control using Git</a>
+### 14. <a name="VersionControlusingGit">Version Control using Git</a>
 2min
 
 15. <a name="DatabaseSetup-InstallingPostgreSQL">Database Setup - Installing PostgreSQL</a>
@@ -462,7 +462,7 @@ Go to rails-app/config/routes.rb
 17. <a name="CreatingourDatabaseandSchemaFilesfromTerminal">Creating our Database and Schema Files from Terminal</a>
 3min
 
-### Section 4: Introduction to Scaffolding
+## Section 4: Introduction to Scaffolding
 13min
 
 18. <a name="GeneratingRailsScaffolding">Generating Rails Scaffolding</a>
@@ -477,7 +477,7 @@ Go to rails-app/config/routes.rb
 21. <a name="ProsandConsofScaffolding">Pros and Cons of Scaffolding</a>
 2min
 
-### Section 5: Intro to Controllers and Routes
+## Section 5: Intro to Controllers and Routes
 28min
 
 22. <a name="AddinganewControllerfromCommandLine">Adding a new Controller from Command Line</a>
@@ -510,7 +510,7 @@ Go to rails-app/config/routes.rb
 31. <a name="CleaningUpOurPostsController">Cleaning Up Our Posts Controller</a>
 4min
 
-### Section 6: Working with Views and Partials
+## Section 6: Working with Views and Partials
 44min
 
 32. <a name="ViewsFolderStructureandFileTypes">Views Folder Structure and File Types</a>
@@ -537,7 +537,7 @@ Go to rails-app/config/routes.rb
 39. <a name="StylingourHomepageView">Styling our Homepage View</a>
 8min
 
-### Section 7: Models and Active Record Basics
+## Section 7: Models and Active Record Basics
 37min
 
 40. <a name="GeneratingaNewModel">Generating a New Model</a>
@@ -561,7 +561,7 @@ Go to rails-app/config/routes.rb
 46. <a name="ScopesandScopeChaining">Scopes and Scope Chaining</a>
 4min
 
-### Section 8: Rails Console and Active Record Continued
+## Section 8: Rails Console and Active Record Continued
 16min
 
 47. <a name="AccessingtheRailsConsole/SandboxMode">Accessing the Rails Console / Sandbox Mode</a>
@@ -576,7 +576,7 @@ Go to rails-app/config/routes.rb
 50. <a name="EditingandDestroyingDatabaseEntries">Editing and Destroying Database Entries</a>
 5min
 
-### Section 9: Managing Assets, Views and Helpers
+## Section 9: Managing Assets, Views and Helpers
 35min
 
 51. <a name="AssetPiplineWebpackerandYarn">Asset Pipline Webpacker and Yarn</a>
@@ -600,7 +600,7 @@ Go to rails-app/config/routes.rb
 57. <a name="HelperforFormValidationMessages">Helper for Form Validation Messages</a>
 3min
 
-### Section 10: Mastering Database Migrations
+## Section 10: Mastering Database Migrations
 7min
 
 58. <a name="CreatingaNewMigration">Creating a New Migration</a>
@@ -615,7 +615,7 @@ Go to rails-app/config/routes.rb
 61. <a name="RollingBackaMigration">Rolling Back a Migration</a>
 1min
 
-### Section 11: User Authentication
+## Section 11: User Authentication
 48min
 
 62. <a name="InstallingtheDeviseGem">Installing the Devise Gem</a>
