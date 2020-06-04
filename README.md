@@ -8,9 +8,87 @@
 
 [1. Installing Homebrew on Mac](#InstallingHomebrewonMac)
 
+Install Homebrew go to Homebrew site
+
 [2. Install Ruby  Setup Postgres Database](#InstallRubySetupPostgresDatabase)
 
+Installthe Ruby environment whch is versio manager for Ruby
+
+$ brew install rbenv ruby-build
+
+This allows us to install multiple version of Ruby which we can switch between for different projects. To check that rbenv has been InstallingtheDeviseGem
+
+$ rbenv install 2.6.3
+
+Set the global version of Ruby
+
+$ rbenv global 2.6.3
+
+Next install Postgres because the default sqlite is not ideal for production, so navigate to postgresapp.com and go to downloads. Downlad the latest stable version which is 12 at time of studying this course. Download the .dmg (for Mac) to Appplications. No configuration needed, should work out of the box.
+
 [3. Install Ruby on Rails + Resources](#InstallRubyonRails+Resources)
+
+WE need rbenv to be added to the .bash_profile file so that our rbenv version of Ruby will load automatically.
+
+$ echo 'export PATH="$HOME/.rbenv/bin:$PATH"' >> ~/.bash_profile
+
+To check the global ruby version
+
+$ rbenv global # system      
+
+Persumably this measn that it is running the system version of Ruby.
+
+Check the local version, which will probably be different
+
+$ ruby -v # ruby 2.7.0p0 (2019-12-25 revision 647ee6f091) [x86_64-darwin18]
+
+Type
+
+$ rbenv shell # rbenv: shell integration not enabled. Run 'rbenv init' for instructions.
+
+Folllow instructions
+
+$ rbenv init
+
+```
+# Load rbenv automatically by appending
+# the following to ~/.bash_profile:
+
+eval "$(rbenv init -)"
+```
+
+Tells us we need to add eval "$(rbenv init -)" to our bash profile
+
+$ nano ~/.bash_profile
+
+Add to the bottom eval "$(rbenv init -)" just after what was previously added there. ctrl-x and y to exit nano
+
+.bash_profile now reads
+
+```
+[[ -s "$HOME/.rvm/scripts/rvm" ]] && source "$HOME/.rvm/scripts/rvm" # Load RVM into a shell session *as a function*
+export PATH="$HOME/.rbenv/bin:$PATH"
+eval "$(rbenv init -)"
+```
+
+The ruby versions is not changing
+
+```
+$ ruby -v
+ruby 2.7.0p0 (2019-12-25 revision 647ee6f091) [x86_64-darwin18]
+```
+
+Next we install Rails
+
+$ gem install rails -v 6.0.3.1 # latest current version
+
+To reconfigure settings
+
+$ rbenv rehash
+
+and check current version of rails
+
+$ rails -v
 
 ### Section 2: Ruby Basics - The Essentials
 
@@ -18,23 +96,194 @@
 
 [5. Strings Integers and Variables](#StringsIntegersandVariables)
 
+The 'puts' command returns a string
+
+```
+puts "2" + 2  # error cannot add a string and an integer
+```
+
 [6. String Interpolation and Type Casting](#StringInterpolationandTypeCasting)
+
+To output numbers inside a string use string interploation
+
+````
+value1 = 2
+value2 = 6
+puts "My value is #{value1}, value2 is #{value2}" # My value is 2
+````
+
+Must use double quotation marks when using string interploation. To use a value outside of thte string we will need to cast it to sa string using .to_s
+
+```
+puts "My value is #{value1}, value2 is " + value2.to_s # My value is 2, value2 is 6
+```
 
 [7. Arrays and Loops](#ArraysandLoops)
 
+Arrays are used to hold multiple values or variables
+
+```
+name = "Shane"
+arr = ["my", "name", "is", name]
+
+puts arr
+```
+
+Iterate over ana rray uses .each do
+
+```
+name = "Shane"
+arr = ["my", "name", "is", name]
+
+arr.each do |value|
+  puts "This element is " + value
+end
+```
+
+Using the index of the element
+
+```
+name = "Shane"
+arr = ["my", "name", "is", name]
+
+arr.each_with_index do |value, index|
+  puts "#{index}. " + value[0].downcase() + value[1].upcase() + value[2...] # second letter of each element is set to upper-case
+end
+```
+
+using type casting
+
+```
+arr.each_with_index do |value, index|
+  puts index.to_s + ". " + value
+end
+```
+
 [8. Creating a Ruby Method](#CreatingaRubyMethod)
+
+Creating a new method that accepts one parameter
+
+```
+def say_my_name name, age
+  puts "Your name is #{name} and you are #{age}"
+end
+
+say_my_name "John", 27
+```
+
+Optionally parenthesis can be used around parameters but only in the method declaration not in calling the method
+
+```
+def say_my_name (name)
+  ...
+end
+```
+
+We can set a default value for the variable and this will be used if no parameter is used when calling the method
+
+```
+def my_method name, age = 18
+  puts "I am #{name}, and my age is #{age}"
+end
+
+my_method "Bill" # no value for age parameter given it will revert to default value in method definition
+```
 
 [9. Ruby Classes and Objects](#RubyClassesandObjects)
 
+Create a class to wrap the method in. Class name must start with an uppr case letter. The initiliaze method gets run before anything else in the class and the beenefir of that is that it allows us to set variables in the class and use they throughout the class with the other methods. This is similar to a construct in Java/
+
+```
+def initialise name
+  @name = name
+end
+```
+
+We need to create a new instance of this class called person1
+
+```
+person1 = Person.new()
+```
+
+We can set an instance variable which allows that value to be used throughout the class.
+
+```
+class Person
+  def initialize name
+    @name = name
+  end
+
+  def details
+    puts "Person is called #{@name}"
+  end
+end
+
+person1 = Person.new("James") # parenthesis are optional
+person1.details # Person is called James
+```
+
 [10. Collecting User Input from the Console](#CollectingUserInputfromtheConsole)
+
+Make the above more interactive.
+
+```
+class Person
+  def initialize name, age
+    @name = name
+    @age = age
+  end
+
+  def details
+    puts "Person is called #{@name}, and their name is #{@age}"
+  end
+end
+
+puts "What is your name?"
+name = gets.chomp() # chomp() removes the line break at the end of the input
+
+puts "What is your age?"
+age = gets.chomp()
+
+person1 = Person.new(name , age) # pass the input variables into the class
+person1.details
+```
 
 ### Section 3: Creating our first Rails Project
 
 [11. Creating a new rails application](#Creatinganewrailsapplication)
 
+For help
+
+```
+rails new --help
+```
+
 [12. Intro to Rails Server  Localhost](#IntrotoRailsServerLocalhost)
 
+To create a new rails app called rails-app
+
+```
+$ rails new rails-app
+$ cd rails-app
+```
+
+To run rails
+
+```
+$ rails server
+```
+
+Can also use the shortcut command
+
+```
+$ rails s
+```
+
 [13. Creating our Home Page](#CreatingourHomePage)
+
+Go to rails-app/config/routes.rb
+
+
 
 [14. Version Control using Git](#VersionControlusingGit)
 
