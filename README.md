@@ -500,11 +500,196 @@ See this render in the browser by navigating to localhost:3000
 ### 15. <a name="DatabaseSetup-InstallingPostgreSQL">Database Setup - Installing PostgreSQL</a>
 3min
 
+Using a database other than the default sqlite. Downlowad postgres from [https://postgresapp.com/](https://postgresapp.com/)
+
+Run PostGreSQL database on your computer locally. Open rail-app/config/databases.yml The default, development and test environments can be seen here. We want to keep the same type database for each environment so that we can detect any problems before we go live.  
+
+Alter this file to
+
+```
+default: &default
+  # adapter: sqlite3
+  adapter: postgresql
+  pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
+  timeout: 5000
+
+development:
+    adapter: postgresql
+    database: postgres
+    host: localhost
+
+# Warning: The database defined as "test" will be erased and
+# re-generated from your development database when you run "rake".
+# Do not set this db to the same as development or production.
+test:
+  <<: *default
+  # database: db/test.sqlite3
+  database: db/rails-blog-test
+
+production:
+  <<: *default
+  # database: db/production.sqlite3
+  database: db/rails-blog-production
+```
+
+Where in the line
+
+```
+database: postgres
+```
+
+'postgres' is the name of one of the datbases created in postgres. If databases have not been created there click initialize. Also before running the rails server you must start the postgres server with
+
+```
+$ pg_ctl -D /usr/local/var/postgres start
+```
+
+Likewise it can be stopped with
+
+```
+pg_ctl -D /usr/local/var/postgres stop
+```
+
 ### 16. <a name="InstallingthePostgresGem">Installing the Postgres Gem</a>
-2min
+2mins
+
+Next install the PostGreSQL gem. Visi https://rubygems.org/gems/pg/versions/0.18.4
+
+In rails-app/Gemfile comment out the sqlite gem and add the PostGreSQL gem
+
+```
+# gem 'sqlite3', '~> 1.4'
+# postgres database
+gem 'pg', '~> 0.18.4'
+```
+
+Install the pg gem in the terminal with
+
+```
+$ bundle install
+```
+
+which will check the Gemfile for any new gems that ned to be installed. This gave me the error,
+
+```
+An error occurred while installing pg (0.18.4), and Bundler cannot continue.
+Make sure that `gem install pg -v '0.18.4' --source 'https://rubygems.org/'` succeeds before bundling.
+```
+
+I ignored this error message and the server still starts
+
+```
+ rails s
+```
 
 ### 17. <a name="CreatingourDatabaseandSchemaFilesfromTerminal">Creating our Database and Schema Files from Terminal</a>
 3min
+
+Next we finalise setting up the database. In the rails-app/db directory remove the development.sqlite3 file. To create a database
+
+```
+rails db:create
+```
+
+This will create both a development and test database as specified in the database.yml file.
+
+When I try to create the databse I get
+
+```
+$ rails db:create
+rbenv: version `ruby-2.7.0' is not installed (set by /Users/shanegibney/NCIRL/Semester3/rails-app/.ruby-version)
+```
+
+[Switching to another Riby version](https://makandracards.com/makandra/21545-rbenv-how-to-switch-to-another-ruby-version-temporarily-per-project-or-globally)
+
+Unlike RVM, rbenv does not offer a command like rvm use. By default, it respects your project's .ruby-version file.
+
+If you need to change manually, you have several options:
+
+```
+rbenv shell
+rbenv local
+rbenv global
+```
+
+You probably want rbenv shell.
+
+Temporarily: rbenv shell
+Changes your Ruby version on your current shell:
+
+```
+$ ruby -v
+ruby 1.9.3p484 (...)
+
+$ rbenv shell 2.0.0-p353
+$ ruby -v
+ruby 2.0.0p353 (...)
+```
+
+Background: This actually sets the RBENV_VERSION environment variable in your terminal session.
+
+Note that your terminal session will no longer respect any .ruby-version files. You need to run rbenv shell --unset to enable the auto switch again.
+
+Per project: rbenv local
+Looks like rbenv shell...
+
+```
+$ ruby -v
+ruby 1.9.3p484 (...)
+
+$ rbenv local 2.0.0-p353
+$ ruby -v
+ruby 2.0.0p353 (...)
+
+```
+
+...but actually writes that version to a .ruby-version in your current directory. Use this only when you want to change the Ruby version on a project, not to change it temporarily (as you'd change your project's file or clutter whatever directory you are currently in with that file).
+
+Globally: rbenv global
+This will also change your Ruby version, but only the one you are using whenever no other version is specified, e.g. via a .ruby-version file or RBENV_VERSION variable.
+
+```
+$ ruby -v
+ruby 1.9.3p484 (...)
+
+$ rbenv global 2.0.0-p353
+$ ruby -v
+ruby 2.0.0p353 (...)
+
+$ echo "1.9.3p484" > .ruby-version
+$ rbenv global 2.0.0-p353
+$ ruby -v
+ruby 1.9.3p484 (...)
+```
+
+I want to globally change my Ruby version
+
+```
+$ rbenv global ruby-2.7.0
+rbenv: version `ruby-2.7.0' not installed
+```
+
+So how to install Runy-2.7.0.
+
+```
+rbenv install 2.7.0
+```
+
+Then
+
+```
+$ rbenv global ruby-2.7.0
+rbenv: version `ruby-2.7.0' not installed
+```
+So clearly a probem there. Check ruby versions with
+
+```
+$ rbenv versions
+  system
+  2.6.3
+* 2.7.0 (set by /Users/shanegibney/NCIRL/Semester3/rails-app/.ruby-version)
+```
+
 
 ## Section 4: Introduction to Scaffolding
 13min
