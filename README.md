@@ -311,7 +311,7 @@ So clearly a probem there. Check ruby versions with
 $ rbenv versions
   system
   2.6.3
-* 2.7.0 (set by /Users/shanegibney/NCIRL/Semester3/rails-app/.ruby-version)
+* 2.7.0 (set by /Users/shanegibney/NCIRL/Semester3/testproject/.ruby-version)
 ```
 
 ### 3. <a name="InstallRubyonRails+Resources">Install Ruby on Rails + Resources</a>
@@ -560,11 +560,11 @@ rails new --help
 ### 12. <a name="IntrotoRailsServerLocalhost">Intro to Rails Server  Localhost</a>
 2min
 
-To ceate a new rails app called rails-app
+To ceate a new rails app called testproject
 
 ```
-$ rails new rails-app
-$ cd rails-app
+$ rails new testproject
+$ cd testproject
 ```
 
 To run server
@@ -582,13 +582,23 @@ $ rail s
 ### 13. <a name="CreatingourHomePage">Creating our Home Page</a>
 4min
 
-Go to rails-app/config/routes.rb and create a default route for the application. Here we use the "root to" syntax and "public" is the name of the controller and "homepage" the method or action within that controller.
+Go to testproject/config/routes.rb and create a default route for the application. Here we use the "root to" syntax and "public" is the name of the controller and "homepage" the method or action within that controller.
 
 ```
 root to: "public#homepage"
 ```
 
-We need ro create a new controller. Create a file app/controllers/public_controller.rb This will be a class which will inherit from ApplicationController
+This goes into routes.rb file like this,
+
+```
+Rails.application.routes.draw do
+  root to: "public#homepage"
+
+  # For details on the DSL available within this file, see https://guides.rubyonrails.org/routing.html
+end
+```
+
+We need to create a new controller. Create a file app/controllers/public_controller.rb This will be a class which will inherit from ApplicationController
 
 ```
 class PublicController < ApplicationController
@@ -670,7 +680,7 @@ pg_ctl -D /usr/local/var/postgres stop
 
 Next install the PostGreSQL gem. Visit https://rubygems.org/gems/pg/versions/0.18.4
 
-In rails-app/Gemfile comment out the sqlite gem and add the PostGreSQL gem
+In testproject/Gemfile comment out the sqlite gem and add the PostGreSQL gem
 
 ```
 # gem 'sqlite3', '~> 1.4'
@@ -763,7 +773,7 @@ I haven't tried this.
 ### 17. <a name="CreatingourDatabaseandSchemaFilesfromTerminal">Creating our Database and Schema Files from Terminal</a>
 3min
 
-Next we finalise setting up the database. In the rails-app/db directory remove the development.sqlite3 file. To create a database
+Next we finalise setting up the database. In the testproject/db directory remove the development.sqlite3 file. To create a database
 
 ```
 $ rails db:create
@@ -858,7 +868,7 @@ Now that we have ceratee our database with
 $ rails db:create
 ```
 
-We crate a schema within
+We create a schema with
 
 ```
 $ rails db:migrate
@@ -877,6 +887,9 @@ end
 
 ## Section 4: Introduction to Scaffolding
 13min
+
+### 18. <a name="GeneratingRailsScaffolding">Generating Rails Scaffolding</a>
+5min
 
 Scaffolidng is used to create boiler plate code for entries in the database. WE crate controllers or models separately using
 
@@ -963,7 +976,7 @@ require_tree is a rails commands and bring together all the other css files in t
 
 The controller file testProject/app/controllers/posts_controller.rb has all the basic CRUD functionality.
 
-The migrate file has also been crated testProject/app/controllers/20200611192445_create_posts.rb We will alter this file slightly to set a default value of true on the 'active' attribute.
+The migrate file has also been created testProject/app/controllers/20200611192445_create_posts.rb We will alter this file slightly to set a default value of true on the 'active' attribute.
 
 ```
 class CreatePosts < ActiveRecord::Migration[6.0]
@@ -1024,6 +1037,15 @@ postgres=# \dt posts
 
 But the table has no data in it yet.
 
+### 19. <a name="RunningourfirstDatabaseMigration">Running our first Database Migration</a>
+1min
+
+Run a migration
+
+```
+$ rails db:migrate
+```
+
 The migration changes the file testProject/app/controllers/20200611192445_create_posts.rb
 
 ```ActiveRecord::Schema.define(version: 2020_06_11_192445) do
@@ -1044,22 +1066,86 @@ end
 
 ```
 
-### 18. <a name="GeneratingRailsScaffolding">Generating Rails Scaffolding</a>
-5min
-
-
-
-### 19. <a name="RunningourfirstDatabaseMigration">Running our first Database Migration</a>
-1min
+This added two addition datetime columns.
 
 ### 20. <a name="Adding/Editing/Deletingfromthebrowser">Adding / Editing / Deleting from the browser</a>
 4min
 
+To see routes
+
+```
+$ rails routes
+                               Prefix Verb   URI Pattern                                                                              Controller#Action
+                                 root GET    /                                                                                        public#homepage
+                                posts GET    /posts(.:format)                                                                         posts#index
+                                      POST   /posts(.:format)                                                                         posts#create
+                             new_post GET    /posts/new(.:format)                                                                     posts#new
+                            edit_post GET    /posts/:id/edit(.:format)                                                                posts#edit
+                                 post GET    /posts/:id(.:format)                                                                     posts#show
+                                      PATCH  /posts/:id(.:format)                                                                     posts#update
+                                      PUT    /posts/:id(.:format)                                                                     posts#update
+                                      DELETE /posts/:id(.:format)                                                                     posts#destroy
+        rails_postmark_inbound_emails POST   /rails/action_mailbox/postmark/inbound_emails(.:format)                                  action_mailbox/ingresses/postmark/inbound_emails#create
+           rails_relay_inbound_emails POST   /rails/action_mailbox/relay/inbound_emails(.:format)                                     action_mailbox/ingresses/relay/inbound_emails#create
+        rails_sendgrid_inbound_emails POST   /rails/action_mailbox/sendgrid/inbound_emails(.:format)                                  action_mailbox/ingresses/sendgrid/inbound_emails#create
+  rails_mandrill_inbound_health_check GET    /rails/action_mailbox/mandrill/inbound_emails(.:format)                                  action_mailbox/ingresses/mandrill/inbound_emails#health_check
+        rails_mandrill_inbound_emails POST   /rails/action_mailbox/mandrill/inbound_emails(.:format)                                  action_mailbox/ingresses/mandrill/inbound_emails#create
+         rails_mailgun_inbound_emails POST   /rails/action_mailbox/mailgun/inbound_emails/mime(.:format)                              action_mailbox/ingresses/mailgun/inbound_emails#create
+       rails_conductor_inbound_emails GET    /rails/conductor/action_mailbox/inbound_emails(.:format)                                 rails/conductor/action_mailbox/inbound_emails#index
+                                      POST   /rails/conductor/action_mailbox/inbound_emails(.:format)                                 rails/conductor/action_mailbox/inbound_emails#create
+    new_rails_conductor_inbound_email GET    /rails/conductor/action_mailbox/inbound_emails/new(.:format)                             rails/conductor/action_mailbox/inbound_emails#new
+   edit_rails_conductor_inbound_email GET    /rails/conductor/action_mailbox/inbound_emails/:id/edit(.:format)                        rails/conductor/action_mailbox/inbound_emails#edit
+        rails_conductor_inbound_email GET    /rails/conductor/action_mailbox/inbound_emails/:id(.:format)                             rails/conductor/action_mailbox/inbound_emails#show
+                                      PATCH  /rails/conductor/action_mailbox/inbound_emails/:id(.:format)                             rails/conductor/action_mailbox/inbound_emails#update
+                                      PUT    /rails/conductor/action_mailbox/inbound_emails/:id(.:format)                             rails/conductor/action_mailbox/inbound_emails#update
+                                      DELETE /rails/conductor/action_mailbox/inbound_emails/:id(.:format)                             rails/conductor/action_mailbox/inbound_emails#destroy
+rails_conductor_inbound_email_reroute POST   /rails/conductor/action_mailbox/:inbound_email_id/reroute(.:format)                      rails/conductor/action_mailbox/reroutes#create
+                   rails_service_blob GET    /rails/active_storage/blobs/:signed_id/*filename(.:format)                               active_storage/blobs#show
+            rails_blob_representation GET    /rails/active_storage/representations/:signed_blob_id/:variation_key/*filename(.:format) active_storage/representations#show
+                   rails_disk_service GET    /rails/active_storage/disk/:encoded_key/*filename(.:format)                              active_storage/disk#show
+            update_rails_disk_service PUT    /rails/active_storage/disk/:encoded_token(.:format)                                      active_storage/disk#update
+                 rails_direct_uploads POST   /rails/active_storage/direct_uploads(.:format)                                           active_storage/direct_uploads#create
+```
+
+Run the server and navigate in the browser to
+
+```
+localhost:3000/posts
+```
+
+View table data from psql commandline prompt
+
+```
+postgres=# SELECT * FROM posts;
+```
+
+or use
+
+```
+postgres=# TABLE "posts"
+```
+
+Or selecting specific columns
+
+```
+postgres=# SELECT title, body FROM posts;
+```
+
+Note the upper-case text is unnecesary
+
+```
+postgres=# select title, body from posts;
+```
+
 ### 21. <a name="ProsandConsofScaffolding">Pros and Cons of Scaffolding</a>
 2min
+Scaffolding creates many files we probably don't need such as app/controllers/helpers/posts_helper.rb and test unit files app/test/test_helper.rb
 
 ## Section 5: Intro to Controllers and Routes
 28min
+
+We will create a controller
+
 
 ### 22. <a name="AddinganewControllerfromCommandLine">Adding a new Controller from Command Line</a>
 3min
