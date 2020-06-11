@@ -185,7 +185,32 @@ Install Homebrew go to Homebrew site
 ### 2. <a name="InstallRubySetupPostgresDatabase">Install Ruby  Setup Postgres Database</a>
 3min
 
-Installthe Ruby environment whch is versio manager for Ruby
+Uninstalling rvm because I don't think you can run rvm  (Ruby Version Manager) with rbenv. Note both are Ruby version managers. [Replacing RVM with rbenv in OS X](https://medium.com/@namangupta01/replacing-rvm-with-rbenv-in-os-x-9dea622bd639)
+
+Remove rvm
+
+```
+$ rvm implode
+Are you SURE you wish for rvm to implode?
+This will recursively remove /Users/shanegibney/.rvm and other rvm traces?
+(anything other than 'yes' will cancel) > yes
+.....
+Could not remove '/Users/shanegibney/.rvm/', please try removing it manually.
+Failed to completely remove /Users/shanegibney/.rvm -- You will have to do so manually.
+
+Note you may need to manually remove /etc/rvmrc and ~/.rvmrc if they exist still.
+Please check all .bashrc .bash_profile .profile and .zshrc for RVM source lines and delete or comment out if this was a Per-User installation.
+Also make sure to remove `rvm` group if this was a system installation.
+Finally it might help to relogin / restart if you want to have fresh environment (like for installing RVM again).
+```
+
+Remove .rvm from home directory
+
+```
+$ sudo rm -rf ~/.rvm
+```
+
+Install the Ruby environment whch is versio manager for Ruby
 
 $ brew install rbenv ruby-build
 
@@ -198,6 +223,96 @@ Set the global version of Ruby
 $ rbenv global 2.6.3
 
 Next install Postgres because the default sqlite is not ideal for production, so navigate to postgresapp.com and go to downloads. Downlad the latest stable version which is 12 at time of studying this course. Download the .dmg (for Mac) to Appplications. No configuration needed, should work out of the box.
+
+[Switching to another Ruby version](https://makandracards.com/makandra/21545-rbenv-how-to-switch-to-another-ruby-version-temporarily-per-project-or-globally)
+
+Unlike RVM, rbenv does not offer a command like rvm use. By default, it respects your project's .ruby-version file.
+
+If you need to change manually, you have several options:
+
+```
+rbenv shell
+rbenv local
+rbenv global
+```
+
+You probably want rbenv shell.
+
+Temporarily: rbenv shell
+Changes your Ruby version on your current shell:
+
+```
+$ ruby -v
+ruby 1.9.3p484 (...)
+
+$ rbenv shell 2.0.0-p353
+$ ruby -v
+ruby 2.0.0p353 (...)
+```
+
+Background: This actually sets the RBENV_VERSION environment variable in your terminal session.
+
+Note that your terminal session will no longer respect any .ruby-version files. You need to run rbenv shell --unset to enable the auto switch again.
+
+Per project: rbenv local
+Looks like rbenv shell...
+
+```
+$ ruby -v
+ruby 1.9.3p484 (...)
+
+$ rbenv local 2.0.0-p353
+$ ruby -v
+ruby 2.0.0p353 (...)
+
+```
+
+...but actually writes that version to a .ruby-version in your current directory. Use this only when you want to change the Ruby version on a project, not to change it temporarily (as you'd change your project's file or clutter whatever directory you are currently in with that file).
+
+Globally: rbenv global
+This will also change your Ruby version, but only the one you are using whenever no other version is specified, e.g. via a .ruby-version file or RBENV_VERSION variable.
+
+```
+$ ruby -v
+ruby 1.9.3p484 (...)
+
+$ rbenv global 2.0.0-p353
+$ ruby -v
+ruby 2.0.0p353 (...)
+
+$ echo "1.9.3p484" > .ruby-version
+$ rbenv global 2.0.0-p353
+$ ruby -v
+ruby 1.9.3p484 (...)
+```
+
+I want to globally change my Ruby version
+
+```
+$ rbenv global ruby-2.7.0
+rbenv: version `ruby-2.7.0' not installed
+```
+
+So how to install Runy-2.7.0.
+
+```
+rbenv install 2.7.0
+```
+
+Then
+
+```
+$ rbenv global ruby-2.7.0
+rbenv: version `ruby-2.7.0' not installed
+```
+So clearly a probem there. Check ruby versions with
+
+```
+$ rbenv versions
+  system
+  2.6.3
+* 2.7.0 (set by /Users/shanegibney/NCIRL/Semester3/rails-app/.ruby-version)
+```
 
 ### 3. <a name="InstallRubyonRails+Resources">Install Ruby on Rails + Resources</a>
 4min
@@ -500,11 +615,11 @@ See this render in the browser by navigating to localhost:3000
 ### 15. <a name="DatabaseSetup-InstallingPostgreSQL">Database Setup - Installing PostgreSQL</a>
 3min
 
-Using a database other than the default sqlite. Downlowad postgres from [https://postgresapp.com/](https://postgresapp.com/)
+Using a database other than the default sqlite. Download postgres from [https://postgresapp.com/](https://postgresapp.com/) This has not proved successful. Need to install with Homebrew. See [section 16](InstallingthePostgresGem).
 
 Run PostGreSQL database on your computer locally. Open rail-app/config/databases.yml The default, development and test environments can be seen here. We want to keep the same type database for each environment so that we can detect any problems before we go live.  
 
-Alter this file to
+Alter this file rail-app/config/databases.yml to
 
 ```
 default: &default
@@ -538,7 +653,7 @@ Where in the line
 database: postgres
 ```
 
-'postgres' is the name of one of the datbases created in postgres. If databases have not been created there click initialize. Also before running the rails server you must start the postgres server with
+'postgres' is the name of one of the databases created in postgres. If databases have not been created there click initialize. Also before running the rails server you must start the postgres server with
 
 ```
 $ pg_ctl -D /usr/local/var/postgres start
@@ -553,7 +668,7 @@ pg_ctl -D /usr/local/var/postgres stop
 ### 16. <a name="InstallingthePostgresGem">Installing the Postgres Gem</a>
 2mins
 
-Next install the PostGreSQL gem. Visi https://rubygems.org/gems/pg/versions/0.18.4
+Next install the PostGreSQL gem. Visit https://rubygems.org/gems/pg/versions/0.18.4
 
 In rails-app/Gemfile comment out the sqlite gem and add the PostGreSQL gem
 
@@ -566,7 +681,7 @@ gem 'pg', '~> 0.18.4'
 Install the pg gem in the terminal with
 
 ```
-$ bundle install
+$ sudo bundle install
 ```
 
 which will check the Gemfile for any new gems that ned to be installed. This gave me the error,
@@ -576,11 +691,74 @@ An error occurred while installing pg (0.18.4), and Bundler cannot continue.
 Make sure that `gem install pg -v '0.18.4' --source 'https://rubygems.org/'` succeeds before bundling.
 ```
 
-I ignored this error message and the server still starts
+Don't understand this error as that gem is included in the Gemfile and there should install when I run 'bundle install' but seems that it is asking me to install it separately. Also I have to run bundle install with sudo or I get permision errors.
+
+Tried to install the gem separately but get this error
 
 ```
- rails s
+$ sudo gem install pg -v '0.18.4' --source 'https://rubygems.org/'
+Building native extensions. This could take a while...
+ERROR:  Error installing pg:
+	ERROR: Failed to build gem native extension.
 ```
+
+I ignored this error message and get
+
+```
+$ rails s
+Could not find gem 'pg (~> 0.18.4)' in any of the gem sources listed in your Gemfile.
+Run `bundle install` to install missing gems.
+```
+
+Also postgres does not work in the commandline
+
+```
+$ which postgres
+```
+
+returns nothing.
+
+Taking hints from [Medium: Solving issues “Could not find gem ‘pg (~> 0.18)’ when creating PostgreSQL db in MacOSX High Sierra](https://medium.com/@hidayatabisena/solving-issues-could-not-find-gem-pg-0-18-when-creating-postgresql-db-in-macosx-high-sierra-2efed94db48e) Turned off postgres server and tried to install PostGreSQL with Homebrew.
+
+```
+$ brew install postgres
+```
+
+Allows for the staring of the server with
+
+```
+$ pg_ctl -D /usr/local/var/postgres start
+```
+
+and also 'which now works' which diidn't before
+
+```
+$ which postgres
+/usr/local/bin/postgres
+```
+
+Next,
+
+```
+$ sudo bundle install
+```
+
+that works. Not sure why I have to keep using sudo.
+
+The server now starts successfully
+
+```
+$ rails s
+
+```
+
+As an aside it seems you should also be able to start new rails project with PostGreSQL using
+
+```
+rails new project_name -T --database=postgresql
+```
+
+I haven't tried this.
 
 ### 17. <a name="CreatingourDatabaseandSchemaFilesfromTerminal">Creating our Database and Schema Files from Terminal</a>
 3min
@@ -588,114 +766,288 @@ I ignored this error message and the server still starts
 Next we finalise setting up the database. In the rails-app/db directory remove the development.sqlite3 file. To create a database
 
 ```
-rails db:create
+$ rails db:create
+2020-06-11 17:58:13.485 BST [22297] ERROR:  database "postgres" already exists
+2020-06-11 17:58:13.485 BST [22297] STATEMENT:  CREATE DATABASE "postgres" ENCODING = 'utf8'
+Database 'postgres' already exists
+Created database 'db/rails-blog-test'
 ```
 
-This will create both a development and test database as specified in the database.yml file.
+Use commandline postgres front-end to access postgres [10 command line utilities postgresql](https://www.datacamp.com/community/tutorials/10-command-line-utilities-postgresql)
 
-When I try to create the databse I get
+```
+$ psql -d postgres -U  shanegibney -W
+Password:
+psql (12.3)
+Type "help" for help.
+
+postgres=#
+```
+
+Listing databases
+
+```
+postgres=# \l
+                                      List of databases
+        Name        |    Owner    | Encoding | Collate | Ctype |      Access privileges      
+--------------------+-------------+----------+---------+-------+-----------------------------
+ db/rails-blog-test | shanegibney | UTF8     | C       | C     |
+ postgres           | shanegibney | UTF8     | C       | C     |
+ template0          | shanegibney | UTF8     | C       | C     | =c/shanegibney             +
+                    |             |          |         |       | shanegibney=CTc/shanegibney
+ template1          | shanegibney | UTF8     | C       | C     | =c/shanegibney             +
+                    |             |          |         |       | shanegibney=CTc/shanegibney
+(4 rows)
+```
+
+To exit the postgres prompt
+
+```
+exit
+
+```
+
+Access a different database
+
+```
+$ psql -d db/rails-blog-test -U  shanegibney -W
+Password:
+psql (12.3)
+Type "help" for help.
+
+db/rails-blog-test=# \l
+                                      List of databases
+        Name        |    Owner    | Encoding | Collate | Ctype |      Access privileges      
+--------------------+-------------+----------+---------+-------+-----------------------------
+ db/rails-blog-test | shanegibney | UTF8     | C       | C     |
+ postgres           | shanegibney | UTF8     | C       | C     |
+ template0          | shanegibney | UTF8     | C       | C     | =c/shanegibney             +
+                    |             |          |         |       | shanegibney=CTc/shanegibney
+ template1          | shanegibney | UTF8     | C       | C     | =c/shanegibney             +
+                    |             |          |         |       | shanegibney=CTc/shanegibney
+(4 rows)
+```
+
+To list tables in a database if they exist
+
+```
+db/rails-blog-test=# \c postgres
+```
+
+To change database
+
+```
+postgres=# \dt
+```
+
+Describe a table
+
+```
+postgres=# \d <table_name>
+```
+
+To list all available psql commands
+
+```
+postgres=# \?
+```
+
+Now that we have ceratee our database with
 
 ```
 $ rails db:create
-rbenv: version `ruby-2.7.0' is not installed (set by /Users/shanegibney/NCIRL/Semester3/rails-app/.ruby-version)
 ```
 
-[Switching to another Riby version](https://makandracards.com/makandra/21545-rbenv-how-to-switch-to-another-ruby-version-temporarily-per-project-or-globally)
-
-Unlike RVM, rbenv does not offer a command like rvm use. By default, it respects your project's .ruby-version file.
-
-If you need to change manually, you have several options:
+We crate a schema within
 
 ```
-rbenv shell
-rbenv local
-rbenv global
+$ rails db:migrate
 ```
 
-You probably want rbenv shell.
-
-Temporarily: rbenv shell
-Changes your Ruby version on your current shell:
+This will create the file project_name/db/schema.db
 
 ```
-$ ruby -v
-ruby 1.9.3p484 (...)
+ActiveRecord::Schema.define(version: 0) do
 
-$ rbenv shell 2.0.0-p353
-$ ruby -v
-ruby 2.0.0p353 (...)
+  # These are extensions that must be enabled in order to support this database
+  enable_extension "plpgsql"
+
+end
 ```
-
-Background: This actually sets the RBENV_VERSION environment variable in your terminal session.
-
-Note that your terminal session will no longer respect any .ruby-version files. You need to run rbenv shell --unset to enable the auto switch again.
-
-Per project: rbenv local
-Looks like rbenv shell...
-
-```
-$ ruby -v
-ruby 1.9.3p484 (...)
-
-$ rbenv local 2.0.0-p353
-$ ruby -v
-ruby 2.0.0p353 (...)
-
-```
-
-...but actually writes that version to a .ruby-version in your current directory. Use this only when you want to change the Ruby version on a project, not to change it temporarily (as you'd change your project's file or clutter whatever directory you are currently in with that file).
-
-Globally: rbenv global
-This will also change your Ruby version, but only the one you are using whenever no other version is specified, e.g. via a .ruby-version file or RBENV_VERSION variable.
-
-```
-$ ruby -v
-ruby 1.9.3p484 (...)
-
-$ rbenv global 2.0.0-p353
-$ ruby -v
-ruby 2.0.0p353 (...)
-
-$ echo "1.9.3p484" > .ruby-version
-$ rbenv global 2.0.0-p353
-$ ruby -v
-ruby 1.9.3p484 (...)
-```
-
-I want to globally change my Ruby version
-
-```
-$ rbenv global ruby-2.7.0
-rbenv: version `ruby-2.7.0' not installed
-```
-
-So how to install Runy-2.7.0.
-
-```
-rbenv install 2.7.0
-```
-
-Then
-
-```
-$ rbenv global ruby-2.7.0
-rbenv: version `ruby-2.7.0' not installed
-```
-So clearly a probem there. Check ruby versions with
-
-```
-$ rbenv versions
-  system
-  2.6.3
-* 2.7.0 (set by /Users/shanegibney/NCIRL/Semester3/rails-app/.ruby-version)
-```
-
 
 ## Section 4: Introduction to Scaffolding
 13min
 
+Scaffolidng is used to create boiler plate code for entries in the database. WE crate controllers or models separately using
+
+```
+$ rails generate model <model-name>
+$ rails generate controller <controller-name>
+```
+
+But scaffoling will create all these in one go. Always us a singular name and start it with an upper-case letter, 'Post'
+
+```
+$ rails generate scaffold Post
+```
+
+The shortcut for 'genrate' is 'g'. The 'scaffold' command will create a lot of new files.
+
+```
+$ rails g scaffold Post title:string summary:string body:text active:boolean
+Running via Spring preloader in process 24040
+      invoke  active_record
+      create    db/migrate/20200611192445_create_posts.rb
+      create    app/models/post.rb
+      invoke    test_unit
+      create      test/models/post_test.rb
+      create      test/fixtures/posts.yml
+      invoke  resource_route
+       route    resources :posts
+      invoke  scaffold_controller
+      create    app/controllers/posts_controller.rb
+      invoke    erb
+      create      app/views/posts
+      create      app/views/posts/index.html.erb
+      create      app/views/posts/edit.html.erb
+      create      app/views/posts/show.html.erb
+      create      app/views/posts/new.html.erb
+      create      app/views/posts/_form.html.erb
+      invoke    test_unit
+      create      test/controllers/posts_controller_test.rb
+      create      test/system/posts_test.rb
+      invoke    helper
+      create      app/helpers/posts_helper.rb
+      invoke      test_unit
+      invoke    jbuilder
+      create      app/views/posts/index.json.jbuilder
+      create      app/views/posts/show.json.jbuilder
+      create      app/views/posts/_post.json.jbuilder
+      invoke  assets
+      invoke    scss
+      create      app/assets/stylesheets/posts.scss
+      invoke  scss
+   identical    app/assets/stylesheets/scaffolds.scss
+```
+
+If you need to undo the scaffold that you have created and have not run 'rails db:migrate' use
+
+```
+$  rails destroy scaffold Post
+```
+
+If you have run a migration then run
+
+```
+$ rake db:rollback
+
+$ rails destroy scaffold Post
+```
+
+'destroy' can be shortened to 'd'.
+
+Just because it is ugly on the front-end, remove app/assets/stylesheets/scaffolds.scss
+
+```
+$ rm -rf app/assets/stylesheets/scaffolds.scss
+```
+
+In app/assets/stylesheets/application.css the following
+
+```
+*= require_tree .
+*= require_self
+```
+
+require_tree is a rails commands and bring together all the other css files in the stylesheets directory. require_self is also a rails command and will pull in the css from this file itself.
+
+The controller file testProject/app/controllers/posts_controller.rb has all the basic CRUD functionality.
+
+The migrate file has also been crated testProject/app/controllers/20200611192445_create_posts.rb We will alter this file slightly to set a default value of true on the 'active' attribute.
+
+```
+class CreatePosts < ActiveRecord::Migration[6.0]
+  def change
+    create_table :posts do |t|
+      t.string :title
+      t.string :summary
+      t.text :body
+      t.boolean :active, default: true
+
+      t.timestamps
+    end
+  end
+end
+```
+
+The 't.timestamps' entry will create two columns in the table one for when the data is updated and another for when it was first cerated.
+
+Running a migration will run migrations on all files in the mograte directory and generate tables in the database.
+
+```
+$ rails db:migrate
+== 20200611192445 CreatePosts: migrating ======================================
+-- create_table(:posts)
+   -> 0.0211s
+== 20200611192445 CreatePosts: migrated (0.0212s) =============================
+```
+
+Access the psql prompt again
+
+```
+psql -d postgres -U  shanegibney -W
+```
+
+Examine the tables
+
+```
+postgres=# \dt
+                  List of relations
+ Schema |         Name         | Type  |    Owner    
+--------+----------------------+-------+-------------
+ public | ar_internal_metadata | table | shanegibney
+ public | posts                | table | shanegibney
+ public | schema_migrations    | table | shanegibney
+(3 rows)
+```
+
+To examine a table
+
+```
+postgres=# \dt posts
+          List of relations
+ Schema | Name  | Type  |    Owner    
+--------+-------+-------+-------------
+ public | posts | table | shanegibney
+(1 row)
+```
+
+But the table has no data in it yet.
+
+The migration changes the file testProject/app/controllers/20200611192445_create_posts.rb
+
+```ActiveRecord::Schema.define(version: 2020_06_11_192445) do
+
+  # These are extensions that must be enabled in order to support this database
+  enable_extension "plpgsql"
+
+  create_table "posts", force: :cascade do |t|
+    t.string "title"
+    t.string "summary"
+    t.text "body"
+    t.boolean "active", default: true
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+  end
+
+end
+
+```
+
 ### 18. <a name="GeneratingRailsScaffolding">Generating Rails Scaffolding</a>
 5min
+
+
 
 ### 19. <a name="RunningourfirstDatabaseMigration">Running our first Database Migration</a>
 1min
