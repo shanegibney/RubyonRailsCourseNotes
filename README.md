@@ -1139,43 +1139,447 @@ postgres=# select title, body from posts;
 
 ### 21. <a name="ProsandConsofScaffolding">Pros and Cons of Scaffolding</a>
 2min
+
 Scaffolding creates many files we probably don't need such as app/controllers/helpers/posts_helper.rb and test unit files app/test/test_helper.rb
 
 ## Section 5: Intro to Controllers and Routes
 28min
 
-We will create a controller
-
-
 ### 22. <a name="AddinganewControllerfromCommandLine">Adding a new Controller from Command Line</a>
 3min
+
+We will create a controller called 'Welcome' with the three pages home, about and contact. These three are also actions
+
+```
+$ rails g controller Welcome home about content
+ Running via Spring preloader in process 26714
+      create  app/controllers/welcome_controller.rb
+       route  get 'welcome/home'
+get 'welcome/about'
+get 'welcome/content'
+      invoke  erb
+      create    app/views/welcome
+      create    app/views/welcome/home.html.erb
+      create    app/views/welcome/about.html.erb
+      create    app/views/welcome/content.html.erb
+      invoke  test_unit
+      create    test/controllers/welcome_controller_test.rb
+      invoke  helper
+      create    app/helpers/welcome_helper.rb
+      invoke    test_unit
+      invoke  assets
+      invoke    scss
+      create      app/assets/stylesheets/welcome.scss
+```
+
+(I accidentally called that conent instead of contact!) I tried to add a page to the controller with '$ rails g controller Welcome contact' but this doesn't work.
+
+These three actions can be found in app/controller/welcome_controller.rb This has also created config/routes.rb and three new files in app/views/welcome the files about.html.erb, content.html.erb and home.html.erb
+
+Restart the rails server after this major change and navigate to localhost:3000/welcome/about localhost:3000/welcome/home or localhost:3000/welcome/content
+
+The difference between this and scafflding is that here we do not create a database migrations or models. So this is good for creating views and staticpages.  
 
 ### 23. <a name="AddinganactiontoaController">Adding an action to a Controller</a>
 1min
 
+Adding a new action or method to the welcome controller at app/controllers/welcome_controller.rb Call the action features
+
+```
+class WelcomeController < ApplicationController
+  def home
+  end
+
+  def features
+
+  end
+  ...
+  ```
+
+Add a new file for this action app/views/welcome/features.html.erb
+
+```
+features page
+```
+
+Add this route to the config/routes.rb
+
+```
+get 'welcome/contact'
+```
+
 ### 24. <a name="Passingdatafromactiontoviews">Passing data from action to views</a>
 3min
+
+If we don't tell Rails which view we want to render it will automatically render one for us. It will try to find a folder with the same name as the controller which is in this case Welcome. Then it will find a file with the same name as that action. Here I am using the action 'home' which is in the welcome controller localhost:3000/welcome/home and this renders the home2.html.erb file in the views which are part of the welcome controller
+
+```
+def home
+
+  render "welcome/home2"
+end
+```
+
+But usually the name of the action is the same as the name of the controller view.
+
+We pass data to a view using an instance variable \@message where the '@' is an alias sign.
+
+```
+def home
+
+  @message = "Welcome to this page"
+end
+```
+
+This will make the message available within the view. Embed this message in our view home.html.erb
 
 ### 25. <a name="UsingConditionsWithinControllers">Using Conditions Within Controllers</a>
 2min
 
+creating a variable some_value within the controller. This variable does not need an alias @ as it is only used in this controller
+
+```
+class WelcomeController < ApplicationController
+  def home
+    some_value = true
+
+    if some_value == true # the double equals checks both the type and value of the variable
+      @message = "Welcome to this page"
+    else
+      @message = "Hope you have a great day"
+    end
+  end
+  ...
+```
+
+So this have to pass data from the controller to the view.
+
 ### 26. <a name="LoggingdatatotheRailsServer">Logging data to the Rails Server</a>
 2min
+
+We can output to the rails server using rails.logger this will print a message to the server. We can pass information using either logger.info or logger.debug We will output our string instance variable and string interpolation \#{ @message} atthe end of the action 'home'
+
+```
+Rails.logger.debug "Message: #{ @message}"
+```
+
+This will output in the console. You can use debug, info, warn, error, fatal or unknown see [Rails LOgger and rails Logging Best Practices](https://stackify.com/rails-logger-and-rails-logging-best-practices/) We can also run this without the string interpolation and directly debug to the Rails server
+
+```
+logger.debug @message
+```
 
 ### 27. <a name="AddingRedirectstoActions">Adding Redirects to Actions</a>
 3min
 
+Directing the user based on conditions. If a value is true redirect to the root page of the project or else render a different view
+
+```
+def home
+  some_value = false
+
+  if some_value == true # the double equals checks both the type and value of the variable
+    redirect_to root_url
+  else
+    redirect_to welcome_features_url # could use instead welcome_features_path
+  end
+  # Rails.logger.debug "Message: #{ @message}" # this can be shortened to logger.debug "Message: #{ @message}"
+  logger.debug "The route: #{ welcome_features_url}" # http://localhost:3000/welcome/features
+  logger.debug "The route: #{ welcome_features_path}" # /welcome/features
+end
+```
+
 ### 28. <a name="AddingFlashDatatoShowSuccess/ErrorMessages">Adding Flash Data to Show Success / Error Messages</a>
 4min
+
+Flash message are useful for passing a snippet of information back to the use via the browser. Here two examples which would be used in the controller but only the second works in this case
+
+```
+# redirect_to root_url, notice: "page redirected successfully!" # does not seems to work!!!
+redirect_to root_url, flash: {success: "page redirected successfully!"}
+```
+
+In the latter 'success' is the key and the string is the value.
+
+The app/views/layouts/application.html.erb is the contains the template data for all of the views and they are output as part of the yield statement
+
+```
+<%= yield %>
+```
+
+To display in application.html.erb
+
+```
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>TestProject</title>
+    <%= csrf_meta_tags %>
+    <%= csp_meta_tag %>
+
+    <%= stylesheet_link_tag 'application', media: 'all', 'data-turbolinks-track': 'reload' %>
+    <%= javascript_pack_tag 'application', 'data-turbolinks-track': 'reload' %>
+  </head>
+
+  <body>
+    <% if flash[:success] %>
+      <p><%= flash[:success] %></p>
+    <% end %>
+
+    <%= yield %>
+  </body>
+</html>
+```
+
+Another way to write the flash message in the controller which will do the same thing
+
+```
+flash[:success] = "page redirected successfully!"
+redirect_to root_url
+```
+
+The controller could look like this now
+
+```
+class WelcomeController < ApplicationController
+  def home
+    some_value = false
+
+    if some_value == true # the double equals checks both the type and value of the variable
+      # redirect_to root_url, notice: "page redirected successfully!" # does not seems to work!!!
+      flash[:success] = "page redirected successfully!"
+      redirect_to root_url
+    else
+      redirect_to welcome_features_url # could use instead welcome_features_path
+      flash[:success] = "Redirect user to features page..."
+    end
+  end
+
+  def features
+  end
+
+  def about
+  end
+
+  def content
+  end
+
+  def contact
+  end
+end
+```
 
 ### 29. <a name="BeforeFilters">Before Filters</a>
 3min
 
+Use 'before_action' to call an action before the other actions in the controller. We will give the action a name 'set_values'
+
+```
+before_action :set_values
+```
+At the end of the controller after the other actions or methods will set these values using private so that they are only acessible inside this controller.
+
+The set_values method will run ebfore the other actions.
+
+```
+private
+
+def set_values
+  @name = "David"
+end
+```
+
+The controller
+
+```
+class WelcomeController < ApplicationController
+  before_action :set_values
+
+  def home
+  end
+
+  def features
+  end
+
+  def about
+  end
+
+  def content
+  end
+
+  def contact
+  end
+
+  private
+
+  def set_values
+    @name = "David"
+  end
+
+end
+```
+
+In application.html.erb
+
+```
+<%= @name %>
+```
+
+or if you'd like to first test that it is present
+
+```
+<body>
+  ....
+
+  <%= @name if @name.present? %>
+</body>
+```
+
+The opposite of 'if' is 'unless' which could be used here to test if the value is not set
+
+```
+<%= @name unless @name.present? %>
+```
+
+In the controller we can use constraint called "only" to limit the method to only run for certain actions
+
+```
+before_action :set_values, only: [:home]
+```
+
+This means now that the method set_values will only be available on the action home. [:home] is an array of actions and could contain several such as [:home, :about, :contact] etc.
+
+```
+class WelcomeController < ApplicationController
+  before_action :set_values, only: [:home, :features] # the method will run 'only' on these actions
+  # before_action :set_values, except: [:home, :features] # the except constrain will make this constraint display on all pages 'except' those listed
+
+  def home
+    some_value = false
+
+    if some_value == true # the double equals checks both the type and value of the variable
+      # redirect_to root_url, notice: "page redirected successfully!" # does not seems to work!!!
+      flash[:success] = "page redirected successfully!"
+      redirect_to root_url
+    else
+      redirect_to welcome_features_url # could use instead welcome_features_path
+      flash[:success] = "Redirect user to features page..."
+    end
+  end
+
+  def features
+  end
+
+  def about
+  end
+
+  def content
+  end
+
+  def contact
+  end
+
+  private
+
+  def set_values
+    @name = "David"
+  end
+
+end
+```
+
+we can change the constraint to 'except' which means that that constraint will dispaly on all of the other pages except those listed
+
+```
+before_action :set_values, except: [:home, :features]
+```
+
 ### 30. <a name="DestroyingControllersinCommandLine">Destroying Controllers in Command Line</a>
 2min
 
+How to remove a controlelr and all the files created by the Rails generate controller command.
+
+```
+$ rails destroy controller Welcome
+```
+
+and 'd' can be used as a shortcut for 'destroy'. But the routes in the routes.rb file will need to be manually deleted.
+
 ### 31. <a name="CleaningUpOurPostsController">Cleaning Up Our Posts Controller</a>
 4min
+
+```
+if @post.save
+  redirect_to @post, notice: 'Post was successfully created.'
+else
+  render :new
+end
+```
+
+The above means, if the post is saved we redirect to the post an flash the message. But what does redirect to \@post mean? And if it doesn't get ferated we render the 'new' action.
+
+Removing the json and reformatting the controller code so that it is simpler and easier to understand
+
+```
+class PostsController < ApplicationController
+  before_action :set_post, only: [:show, :edit, :update, :destroy]
+
+  # GET /posts
+  def index
+    @posts = Post.all
+  end
+
+  # GET /posts/1
+  def show
+  end
+
+  # GET /posts/new
+  def new
+    @post = Post.new
+  end
+
+  # GET /posts/1/edit
+  def edit
+  end
+
+  # POST /posts
+  def create
+    @post = Post.new(post_params)
+
+      if @post.save
+        redirect_to @post, notice: 'Post was successfully created.'
+      else
+        render :new
+      end
+  end
+
+  # PATCH/PUT /posts/1
+  def update
+      if @post.update(post_params)
+        redirect_to @post, notice: 'Post was successfully updated.'
+      else
+        render :edit
+      end
+  end
+
+  # DELETE /posts/1
+  def destroy
+    @post.destroy
+      redirect_to posts_url, notice: 'Post was successfully destroyed.'
+  end
+
+  private
+    # Use callbacks to share common setup or constraints between actions.
+    def set_post
+      @post = Post.find(params[:id])
+    end
+
+    # Only allow a list of trusted parameters through.
+    def post_params
+      params.require(:post).permit(:title, :summary, :body, :active)
+    end
+end
+```
 
 ## Section 6: Working with Views and Partials
 44min
