@@ -1587,26 +1587,443 @@ end
 ### 32. <a name="ViewsFolderStructureandFileTypes">Views Folder Structure and File Types</a>
 5min
 
+The applications.html.erb file is loaded first. The new version of rails uses the javascript_pack_tag older versions has javascript outside the assets folder.
+
+The app/mailer folder contains files for the content of emails.
+
+In app/views/layout/posts we have json files such as app/views/posts/show.json.jbuilder which are actually the json response from the database. The jbuilder fiels can be removed from this directory.
+
+The file app/views/posts/new.html.erb reenders a forma nd passes the values of \@post
+
+``` <h1>New Post</h1>
+
+<%= render 'form', post: @post %>
+
+<%= link_to 'Back', posts_path %>
+
+```
+
+We would like to output some entries from database on our homepage app/views/public/homepage.html.erb
+
+We need to create a new stylesheet which can be either .css file or a sass style shett with extension .scss The scsss stylesheet will allow more functionalitya nd for use to embed stylesheets within out stylesheets. More on [sass](www.sass-lang.com) Sass is almost identical to css but you can do nesting.
+
 ### 33. <a name="BootstrapandCreatingOurFirstPartial">Bootstrap and Creating Our First Partial</a>
 4min
+
+Installing [Bootstrap](https://getbootstrap.com/) using the CDN. A partial in rails begins with an underscore in the file name such as \_footer.html.erb Partials can be used across multiple views. Create the partial app/views/layouts/\_footer.html.erb
+
+Add the bootstrap CDN link to either the partial or applications.html.erb I think the later is the best option.
+
+To include a partial in a view such as applications.html.erb use the render helper
+
+```
+<body>
+
+  <%= yield %>
+
+  <%= render partial: "layouts/footer" %>
+</body>
+```
+
+Using the render helper, the path to the partial is "layouts/footer" and so even though we are in the layoits fodler we seem to need a path relative to the views directory. Also although partial is called \_footer.html.erb we only use footer in the path name "layouts/footer"
+
+Look at the source code in the rowser to see that the CDN scripts have been included. Also the sytlsheets can be seen separately. This only happens in development, in production they are combined into one stylesheet.
+
+```
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>TestProject</title>
+    <%= csrf_meta_tags %>
+    <%= csp_meta_tag %>
+
+    <%= stylesheet_link_tag 'application', media: 'all', 'data-turbolinks-track': 'reload' %>
+    <%= javascript_pack_tag 'application', 'data-turbolinks-track': 'reload' %>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js" integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI" crossorigin="anonymous"></script>
+  </head>
+
+  <body>
+
+    <%= yield %>
+
+    <%= render partial: "layouts/footer" %>
+  </body>
+</html>
+```
 
 ### 34. <a name="DisplayingBlogPostEntries">Displaying Blog Post Entries</a>
 8min
 
+To pull in everything from the Post model in the homepage method of the public controller app/controllers/public_controller.rb we create an instance variable \@posts
+
+```
+class PublicController < ApplicationController
+  def homepage
+    @posts = Post.all # pull in all from teh Post model
+  end
+end
+```
+
+To iterate through the data assigned to posts in app/views/public/homepage.html.erb
+
+```
+<h2>Latest posts</h2>
+
+ <% @posts.each do |post| %>
+  <h3><%= post.title %></h3>
+  <p><%= post.summary %></p>
+ <% end %>
+```
+
+Adding link_to helper link tot he post
+
+```
+<h2>Latest posts</h2>
+
+ <% @posts.each do |post| %>
+  <h3><%= link_to post.title, post_path(post) %></h3>
+  <p><%= post.summary %></p>
+ <% end %>
+```
+
+Here post_path, we always add the model name and append it with '\_path'. Then we pass in the parameter post which is the current iteration of posts in the .each do loop. This brings us automatically to app/views/posts/show.html.erb a file that was created when we did the scaffolding.
+
+show.html.erb has been stripped back and we can use the simple_format helper to display text in paragraph tags <p> where the text is in paragraphs.
+
+```
+<h1><%= @post.title %></h1>
+
+<p><%= simple_format @post.body %></p>
+```
+
 ### 35. <a name="AddingPageNavigationView">Adding Page Navigation View</a>
 9min
+
+Adding custom navigation to layout. We can using the 'render' tag without the 'partial' and it still loads anyway.
+
+```
+<%= render "layouts/_menu" %>
+```
+
+But the correct syntax is to use the 'partial'
+
+```
+<%= render partial "layouts/_menu" %>
+```
+
+We need to create the file app/views/layouts/\_menu.html.erb notive this file name starts with an underscore as it is a partial. The bootstrap class 'list-unstyled' removes the bullet points from the unordered list items
+
+```
+<ul class="list-unstyled" id="topnav">
+  <li>Home</li>
+  <li>About</li>
+  <li>Blog</li>
+  <li>Contact</li>
+</ul>
+```
+
+In app/assets/stylesheets/public.scss we will add the style for the the id topnav
+
+```
+#topnav {
+  li {
+    display: inline;
+  }
+}
+```
+
+To put the menu inline with the body content
+
+```
+<div class="container">
+  <div class="row">
+    <div class="col">
+      <%= render partial: "layouts/menu" %>
+
+    </div>
+  </div>
+
+    <div class="row">
+      <div class="col">
+        <%= yield %>
+      </div>
+    </div>
+  </div>
+```
+
+Add a site title and sue the boostrap classes 'float-right' and 'float-left'. Also we will use the Boostrap helper tag 'link_to'
+
+```
+<h1 class="float-left">Rails Blog</h1>
+<ul class="float-right list-unstyled" id="topnav">
+  <li><%= link_to "Home", root_path %>Home</li>
+  <li><%= link_to "About", about_path %>About</li>
+  <li><%= link_to "Blog", blog_path %>Blog</li>
+  <li><%= link_to "Contact", contact_path %>Contact</li>
+</ul>
+```
+We still need to create the routes in config/routes.rb
+
+```
+get "about" => "public#about", as: :about
+```
+
+Above 'get' is used because it is a get request, the "about" sets the url to '/about' and the '=>' assigns the url to the controller and action. 'public' is the controller name, and 'about' is the action name. 'as:' allows us to name this route to 'about' in this case. And we repeat this for the other routes.
+
+```
+get "about" => "public#about", as: :about
+get "blog" => "public#blog", as: :blog
+get "contact" => "public#contact", as: :contact
+```
+
+Note that this
+
+```
+get "about" => "public#about", as: :about
+```
+
+i s shorthand for
+
+```
+get "about", controller: "public", action: "about", as: :about
+```
+
+We need to define each page within the pubic controller app/controllers/public_controller.rb and define an action for ech of the pages
+
+```
+class PublicController < ApplicationController
+  def homepage
+    @posts = Post.all
+  end
+
+  def about
+  end
+
+  def blog
+  end
+
+  def contact
+  end
+end
+```
+
+When these actions are called they will try to load an view of the same name. In \_menu.html.erb in the 'about_path' the 'about' part is so called because that is the name that we gave it in routes.rb file.  Similar with blog_path and contact_path.  
+
+You will need to create the following views  
+
+app/views/public/blog.html.erb
+
+app/views/public/about.html.erb
+
+app/views/public/contact.html.erb
 
 ### 36. <a name="PartialsandLocalVariables">Partials and Local Variables</a>
 3min
 
+Looking at app/views/public/homepage.html.erb we are going to put a partial within the loop.
+
+```
+<h2>Latest posts</h2>
+
+ <% @posts.each do |post| %>
+       <%= render partial: "posts/post" %>
+ <% end %>
+```
+
+We will create a new partial app/views/posts/\_posts.html.erb
+
+```
+<h3><%= link_to post.title, post_path(post) %></h3>
+<p><%= post.summary %></p>
+```
+
+This will not work as we need to pass the value 'post' which contains for example post.title and post.summary into the partial.
+
+We can check if a variable is set and only execute the code if it is
+
+```
+<% if local_assigns[:post] %>
+<h3><%= link_to post.title, post_path(post) %></h3>
+<p><%= post.summary %></p>
+<% end %>
+```
+
+We pass in the local variable using the 'locals' option and then within curly brackets we set the post and then assign a value of post
+
+```
+<h2>Latest posts</h2>
+
+ <% @posts.each do |post| %>
+       <%= render partial: "posts/post", locals: { post: post}%>
+ <% end %>
+```
+
 ### 37. <a name="Usingcontent_forinlayouts">Using content_for in layouts</a>
 4min
+
+If we are using a view and we want to pass information back to the application.html.erb layer. To do this we use the helper 'content_for'. An example of where we would need this is that the page title will need to change for every page we visit and so we would need to pass a different title back to the application_html.erb to do this. In the top of the homepage.html.erb we put
+
+```
+<% content_for :page_title, "Home" %>
+
+<h2>Latest posts</h2>
+
+ <% @posts.each do |post| %>
+       <%= render partial: "posts/post", locals: { post: post}%>
+ <% end %>
+```
+
+This uses the 'content_for' helper, and sets a key of 'page_title' and a value of "Home". Then in application_html.erb we want to output that value using 'yield' tag
+
+```
+<!DOCTYPE html>
+<html>
+  <head>
+    <title><%= yield :page_title %>Rails App</title>
+    <%= csrf_meta_tags %>
+    <%= csp_meta_tag %>
+    ...........
+```
+
+We can check to see if the content_for 'page_title' is present and if it is then we use the yield else we default the value to "Ruby on Rails Blog"
+
+```
+<% content_for?():page_title? |yield(:page_title) : "Ruby on Rails Blog"%> | Rails App %>
+```
+
+This can be done similarly for blog.html.erb, about.html.erb and contact.html.erb
+
+Using a content_for for a block of code rather an inline as before. This time we will crate a script block. The purpose of thise will be to output javascript files or any third party files. Add to the bottom of the homepage.html.erb
+
+```
+<% content_for :scripts do %>
+  This will be displayed at the bottom of the page tag
+<% end %>
+```
+
+Back in application.html.erb add to the bottom
+
+```
+<%= yield(:scripts) if content_for(:scripts) %>
+```
+
+This will output the content in the block which we previously names 'scripts' but it will also check to see that it is present. This is genrally used to get JavaScript into the bottom of specific pages.
 
 ### 38. <a name="CommonMistakeswithViews-MissingTemplate">Common Mistakes with Views - Missing Template</a>
 2min
 
+Remember to create a view when you set up a link to it.
+
 ### 39. <a name="StylingourHomepageView">Styling our Homepage View</a>
 8min
+
+Add styling to the homepage by working with app/assets/stylesheets/public.scss and also add a margin
+
+```
+#topnav {
+  margin-top: 10px;
+
+  li {
+    display: inline;
+    padding: 5px 7px;
+  }
+}
+
+#site-name {
+  font-size: 22px;
+  margin-top: 10px;
+}
+```
+
+And an id="site-name" to \_menu.html.erb
+
+```
+<h1 class="float-left" id="site-name">Rails Blog</h1>
+```
+
+Then to application.html.erb
+
+```
+<body>
+  <div class="container">
+    <div class="row">
+      <div class="col">
+        <%= render partial: "layouts/menu" %>
+      </div>
+    </div>
+      <div class="row">
+        <div class="col page-nav ">
+          <%= yield %>
+        </div>
+      </div>
+    </div>
+
+    <%= render partial: "layouts/footer" %>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js" integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI" crossorigin="anonymous"></script>
+
+  <%= yield(:scripts) if content_for(:scripts) %>
+</body>
+```
+
+In homepage.html.erb change
+
+```
+<% content_for :page_title, "Home" %>
+
+<div class="row">
+  <div class="col-8">
+    <p class="h4">Latest Posts</p>
+    <% @posts.each do |post| %>
+          <%= render partial: "posts/post", locals: { post: post}%>
+    <% end %>
+  </div>
+  <div class="col-4">
+    <p class="h4">About</p>
+    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+  </div>
+</div>
+```
+
+to
+
+```
+<p class="h4">Latest Posts</p>
+```
+
+Update \_post.html.erb to
+
+```
+<% if local_assigns[:post] %>
+<p class="h5"><%= link_to post.title, post_path(post) %></p>
+<p><%= post.summary %></p>...
+<% end %>
+```
+
+We will add a sidebar to our homepage.html.erb
+
+```
+<% content_for :page_title, "Home" %>
+
+<div class="row">
+  <div class="col-8">
+    <p class="h4">Latest Posts</p>
+    <% @posts.each do |post| %>
+          <%= render partial: "posts/post", locals: { post: post}%>
+    <% end %>
+  </div>
+  <div class="col-4">
+    <p class="h4">About</p>
+    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+  </div>
+</div>
+```
 
 ## Section 7: Models and Active Record Basics
 37min
