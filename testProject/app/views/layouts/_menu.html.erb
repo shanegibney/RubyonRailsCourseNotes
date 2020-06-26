@@ -1,0 +1,10 @@
+<h1 class="float-left" id="site-name">Rails Blog</h1>
+<ul class="float-right list-unstyled" id="topnav">
+  <li><%= link_to "Home", root_path %></li>
+  <li><%= link_to "About", about_path %></li>
+  <li><%= link_to "Blog", blog_path %></li>
+  <!-- How does it know to look in the public controller for blog.html.erb -->
+  <!-- since we are in layouts/_menu.html.erb ? -->
+  <!-- Because in routes.rb we have get "blog" => "public#blog", as: :blog -->
+  <li><%= link_to "Contact", contact_path %></li>
+</ul>

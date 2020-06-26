@@ -1,3 +1,4 @@
+
 # Ruby on Rails Udemy Course Notes
 
 [Udemy Ruby on Rails 6 course](https://www.udemy.com/course/complete-beginners-course-for-ruby-on-rails-6/learn/lecture/16532898?start=0#overview)
@@ -174,8 +175,7 @@
 
 # Course
 
-## Section 1: Installing Ruby on Rails 6
-9min
+## Section 1: Installing Ruby on Rails 6 (9min)
 
 ### 1. <a name="InstallingHomebrewonMac">Installing Homebrew on Mac</a>
 2min
@@ -1862,6 +1862,7 @@ We pass in the local variable using the 'locals' option and then within curly br
  <% end %>
 ```
 
+
 ### 37. <a name="Usingcontent_forinlayouts">Using content_for in layouts</a>
 4min
 
@@ -2031,23 +2032,713 @@ We will add a sidebar to our homepage.html.erb
 ### 40. <a name="GeneratingaNewModel">Generating a New Model</a>
 2min
 
+We will create a new model
+
+```
+$ rails generate model Category title:string url:string
+Running via Spring preloader in process 56598
+      invoke  active_record
+      create    db/migrate/20200616204455_create_categories.rb
+      create    app/models/category.rb
+      invoke    test_unit
+      create      test/models/category_test.rb
+      create      test/fixtures/categories.yml
+```
+
+This creates a new migrations file db/migrate/20200616204455_create_categories.rb Note that the file's timestamp is in the title. Note also that the table name is the pluralisation of th modl name i.e. category and categories
+
+```
+class CreateCategories < ActiveRecord::Migration[6.0]
+  def change
+    create_table :categories do |t|
+      t.string :title
+      t.string :url
+
+      t.timestamps
+    end
+  end
+end
+```
+
+This will also crate the timestamp fields for created_at and updated_at
+
+To actuall create the new table and columns in the database we need to run a migration
+
+```
+$  rails db:migrate
+== 20200616204455 CreateCategories: migrating =================================
+-- create_table(:categories)
+   -> 0.0136s
+== 20200616204455 CreateCategories: migrated (0.0137s) ========================
+```
+
+Looking at the db/schema.rb file will show the new table and categories
+
+```
+ActiveRecord::Schema.define(version: 2020_06_16_204455) do
+
+  # These are extensions that must be enabled in order to support this database
+  enable_extension "plpgsql"
+
+  create_table "categories", force: :cascade do |t|
+    t.string "title"
+    t.string "url"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+  end
+
+  create_table "posts", force: :cascade do |t|
+    t.string "title"
+    t.string "summary"
+    t.text "body"
+    t.boolean "active", default: true
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+  end
+
+end
+```
 ### 41. <a name="ActiveRecordValidations">ActiveRecord Validations</a>
 5min
+
+We need to look at validating the data in the database. We want to control the data that goes into the database to make sure that it is in the correct format and that there are not issues with it. We can do this using Active Record validations. Update app/models/category.rb
+
+```
+class Category < ApplicationRecord
+  validates_presence_of : :title, :url
+end
+```
+
+We will also add some validations to our post model app/models/post.rb This time we are doing the validation differently. This way allows us to pass all our options into this validation method
+
+```
+class Post < ApplicationRecord
+  validates :title, presence: true
+  validates :summary, presence: true, length: { maximum: 200 }
+  validates :body, presence: true, length: { minimum: 100  }
+  validates :active, in: [true, false]
+end
+```
+
+As you can see the body valiation has a length of 20 characters and the others are obvious.  The active column uses 'in' to validate for a true or false value as it is boolean.
+
+If we needed to validate that a column is alwys true
+
+```
+validates :terms_of_service, acceptance: true
+```
+
+Or to validate that a column is always a number
+
+```
+validates :rating, numbericality: true
+```
+
+validating a number but also specifying that it is an integer
+
+```
+validates :rating, numbericality: { only_integer: true}
+```
+
+To validate for uniqueness so that there are not two titles with the same name
+
+```
+validates :title, presence: true, uniqueness: true
+```
+
+And we can take this further by checking against a second column
+
+```
+validates :title, presence: true, uniqueness: true, cope: { :category_id}
+```
+
+But we will just use simple validations for the post model
+
+```
+class Post < ApplicationRecord
+  validates :title, presence: true
+  validates :summary, presence: true
+  validates :body, presence: true
+end
+```
 
 ### 42. <a name="AddingaNewModelMethod">Adding a New Model Method</a>
 3min
 
+Defining a new method in a model. Looking at app/models/post.rb
+
+```
+class Post < ApplicationRecord
+  validates :title, presence: true
+  validates :summary, presence: true
+  validates :body, presence: true
+
+  def details
+    "This post was created on #{ created_at.strftime("%d/%M/%Y")}"
+  end
+end
+```
+
+This can be used on the show method in the posts controller app/controllers/posts_controller.rb
+
+```
+class PostsController < ApplicationController
+  before_action :set_post, only: [:show, :edit, :update, :destroy]
+
+  # GET /posts
+  def index
+    @posts = Post.all
+  end
+
+  # GET /posts/1
+  def show
+  end
+  ........
+```
+
+If we go to the show view app/views/posts/show.html.erb
+
+```<h1><%= @post.title %></h1>
+
+<%= @post.details %>
+
+<p><%= simple_format @post.body %></p>
+```
+
 ### 43. <a name="ClassMethodsvsInstanceMethods">Class Methods vs Instance Methods</a>
 4min
+
+We will look at the difference between an instance method and a class method. The previous 'details' method is actually an instance method becuse we were calling it while using a post method in app/views/posts/show.html.erb
+
+```
+<h1><%= @post.title %></h1>
+
+<%= @post.details %>
+
+<p><%= simple_format @post.body %></p>
+```
+
+Above we have an instance of post already and we call a method details on it. Class methods are run directly on the class itself. To define a class method use 'self.details' Because we have changed our method to a class method we need to call it directly on the model with Post instead of \@post.
+
+```
+<h1><%= @post.title %></h1>
+
+<%= Post.details %>
+
+<p><%= simple_format @post.body %></p>
+```
+
+This method is defined in app/models/post.rb
+
+```
+class Post < ApplicationRecord
+  validates :title, presence: true
+  validates :summary, presence: true
+  validates :body, presence: true
+
+  def details
+    "This post was created on #{ created_at.strftime("%d/%M/%Y")}"
+  end
+end
+```
+
+Running the current state will throw an error becuse created_at we are not calling it on an instance of the Post model.
+
+We willcreate a new method in the post model app/models/post.rb 'all' will return all the posts on this model. We will use size as 'all.size' to return the number of rows in that model.  
+
+```
+class Post < ApplicationRecord
+  validates :title, presence: true
+  validates :summary, presence: true
+  validates :body, presence: true
+
+  def details
+    "This post was created on #{ created_at.strftime("%d/%M/%Y")}"
+  end
+
+  def self.total
+     all.size # this is the same as Post.size
+     #count # alternatively we could use this and this will return the ame thing
+  end
+end
+```
+
+Aside
+
+```
+<h1><%= @post.title %></h1>
+
+<%= @post.details %>
+
+<p>Total entries for Posts: <%= Post.total %></p>
+
+<p><%= simple_format @post.body %></p>
+
+<p><%= Post.size %></p> # throws an error
+<p><%= Post.count %></p> # returns 2 as epected
+<p><%= Post.all %></p> # returns nothing
+```
+
+So seems to be possible to call the model directly from the partial. So why then use a method in the model?
 
 ### 44. <a name="ActiveRecordAssociations">Active Record Associations</a>
 12min
 
+We will create a new model app/models/Comment.rb The comment will be attached to a post in other words the comment belongs_to a post We are using a singular of post as each comment will belong to a single post
+
+```
+class Comment < ApplicationRecord
+  belongs_to :post
+end
+```
+
+We will also create a new model called app/models/User.rb A user has many posts and so we use the 'has_many' command and we want to associate this with :posts This means that each post has a user id associated with it
+
+```
+class User < ApplicationRecord
+    # relationships between models
+    has_many :posts
+end
+```
+
+And in app/models/post.rb we need to tell rails that a post belongs_to a user. Because of the belongs_to relationship in the Comment model we should also have that post with a has_many relationship in the Post model
+
+```
+class Post < ApplicationRecord
+  validates :title, presence: true
+  validates :summary, presence: true
+  validates :body, presence: true
+
+  belongs_to :user
+  has_many :comments
+end
+```
+
+We shouldn't add this but the posts table should have a user_id in the schema like this
+
+```
+t.integer "user_id"
+```
+
+These association between models allows us to output the data later in our views. We can select data that has the association. This might look like this in app/views/posts/show.html.erb
+
+```
+<h1><%= @post.title %></h1>
+
+<%= @post.details %>
+
+<p>Total entries for Posts: <%= Post.total %></p>
+
+<p><%= simple_format @post.body %></p>
+
+<% @post.comments.each do |comment| %>
+  <%= comment.body %>
+<% end %>
+```  
+
+Remove those models for Comment and User and assign each category with many posts in app/models/category.rb
+
+```
+class Category < ApplicationRecord
+  validates_presence_of : :title, :url
+  has_many :posts
+end
+```
+
+Also then each post must belong to a category, so in app/models/post.rb
+
+```
+class Post < ApplicationRecord
+  validates :title, presence: true
+  validates :summary, presence: true
+  validates :body, presence: true
+
+  belongs_to :category
+end
+```
+
+For this to work we need to add a column of category_id to the post model. To do this we need to do a migration for this new column.
+
+```
+$ rails g migration add_category_id_to_posts category:references
+Running via Spring preloader in process 74873
+      invoke  active_record
+      create    db/migrate/20200619165223_add_category_id_to_posts.rb
+```
+
+This created a new migrations file db/migrate/20200619165223_add_category_id_to_posts.rb
+
+```
+class AddCategoryIdToPosts < ActiveRecord::Migration[6.0]
+  def change
+    add_reference :posts, :category, null: false, foreign_key: true
+  end
+end
+```
+
+Running a migration throws erros because the category id must contain a value that is not null. We alrady have entries in our posts table and since this is a new column that we have added there is currently no value set for this category id.
+
+```
+$  rails db:migrate
+== 20200619165223 AddCategoryIdToPosts: migrating =============================
+-- add_reference(:posts, :category, {:null=>false, :foreign_key=>true})
+rails aborted!
+StandardError: An error has occurred, this and all later migrations canceled:
+
+PG::NotNullViolation: ERROR:  column "category_id" contains null values
+/Users/shanegibney/NCIRL/Semester3/testProject/db/migrate/20200619165223_add_category_id_to_posts.rb:3:in `change'
+/Users/shanegibney/NCIRL/Semester3/testProject/bin/rails:9:in `<top (required)>'
+/Users/shanegibney/NCIRL/Semester3/testProject/bin/spring:15:in `<top (required)>'
+bin/rails:3:in `load'
+bin/rails:3:in `<main>'
+
+Caused by:
+ActiveRecord::NotNullViolation: PG::NotNullViolation: ERROR:  column "category_id" contains null values
+/Users/shanegibney/NCIRL/Semester3/testProject/db/migrate/20200619165223_add_category_id_to_posts.rb:3:in `change'
+/Users/shanegibney/NCIRL/Semester3/testProject/bin/rails:9:in `<top (required)>'
+/Users/shanegibney/NCIRL/Semester3/testProject/bin/spring:15:in `<top (required)>'
+bin/rails:3:in `load'
+bin/rails:3:in `<main>'
+
+Caused by:
+PG::NotNullViolation: ERROR:  column "category_id" contains null values
+/Users/shanegibney/NCIRL/Semester3/testProject/db/migrate/20200619165223_add_category_id_to_posts.rb:3:in `change'
+/Users/shanegibney/NCIRL/Semester3/testProject/bin/rails:9:in `<top (required)>'
+/Users/shanegibney/NCIRL/Semester3/testProject/bin/spring:15:in `<top (required)>'
+bin/rails:3:in `load'
+bin/rails:3:in `<main>'
+Tasks: TOP => db:migrate
+(See full trace by running task with --trace)
+```
+
+We could solve this by removing the null :false option in the migration db/migrate/20200619165223_add_category_id_to_posts.rb
+
+```
+class AddCategoryIdToPosts < ActiveRecord::Migration[6.0]
+  def change
+    add_reference :posts, :category, foreign_key: true
+  end
+end
+```
+
+Now run
+
+```
+$ rails g migration add_category_id_to_posts category:references
+Running via Spring preloader in process 75295
+     invoke  active_record
+  identical    db/migrate/20200619165223_add_category_id_to_posts.rb
+```
+
+Remove null:false, from db/migrate/20200619165223_add_category_id_to_posts.rb
+
+```
+$ rails db:migrate  
+== 20200619165223 AddCategoryIdToPosts: migrating =============================
+-- add_reference(:posts, :category, {:foreign_key=>true})
+  -> 0.0411s
+== 20200619165223 AddCategoryIdToPosts: migrated (0.0412s) ====================
+```
+
+This is adds the catgeory_id to the db/schema.rb file
+
+```
+t.datetime "updated_at", precision: 6, null: false
+t.bigint "category_id"
+t.index ["category_id"], name: "index_posts_on_category_id"
+end
+```
+
+Then navigate to
+
+```
+http://localhost:3000/posts
+```
+
+and destroy all posts. Next we want a ne wpost to include the id of the category. To do that we need to add a field to the form in app/views/posts/\_form.html.erb We are using a select menu and Category.all.collect to select all of the values in the table. We will collect those values and return two of those values in an array format, that would be the title and the id. Also
+
+```
+<div class="field">
+  <%= form.label :category_id %>
+  <%= form.text_area :category_id, Category.all.collect{ |c| [c.title, c.id]}%>
+</div>
+```
+
+Also since we are adding a new value we will need to add it to the posts controller app/controllers/posts_controller.rb At the bottom of the controller we are white listing the parameters that can be saved to the database.
+
+```
+# Only allow a list of trusted parameters through.
+def post_params
+  params.require(:post).permit(:title, :summary, :body, :active, :category_id)
+end
+```
+
+We need to add data to the categories table in order to have some elements in the select menu. Invoke the rails console with,
+
+```
+$ rails c
+```
+
+And then add some data to th categories model
+
+```
+Category.create([
+  { title: "Ruby on Rails", url: "ruby-on-rails" },
+  { title: "JavaScript", url: "javascript" },
+  { title: "Python", url: "python" }
+])
+```
+
+and then use 'exit' to exit the rails console. You may need to add scaffolding to create everything for the Catgeories Model, View and Controller
+
+```
+$ rails g scaffold Category title:string url:string
+```
+
+Now you can create a new post by associating a category with each post.
+
+Next we'll go to app/views/public/homepage.html.erb and add some information about the categories
+
+```
+<p class="h4">Categories</p>
+<% @categroies.each do | category | %>
+<p><%= category.title %> - <%= category.total %></p>
+<% end %>
+```
+
+The category.total will call a method called 'total' which we have yet to create.
+
+In app/controllers/public_controller.rb add '@categories = Category.all'
+
+```
+def homepage
+  @posts = Post.all
+  @categories = Category.all
+end
+```
+
+We will create the method in the category model app/models/category.rb This is an instance method within the model.
+
+```
+class Category < ApplicationRecord
+  validates_presence_of :title, :url
+  has_many :posts
+
+  def total
+    posts.count
+  end
+end
+```
+
+[Guide to ActiveRecord Associations](https://guides.rubyonrails.org/association_basics.html)
+
 ### 45. <a name="ActiveRecordCallbacks">Active Record Callbacks</a>
 8min
 
+Within the Post model we will create a private section in testProject/app/models/post.rb n list the method we create as callbacks. We will create a method called post_log_message and the purpose of this message is to posta message to the Rails server. To create a callback we use the fomat of
+
+```
+before_validation :post_log_message
+```
+
+or we could use before_save, before_create, after_validation or after_save this allows us to trigger our own custom methods at certain intervals. We will use
+
+```
+after_create :post_log_message
+```
+
+This means that after a post is created it will trigger this method called post_log_message
+
+```
+class Post < ApplicationRecord
+  validates :title, presence: true
+  validates :summary, presence: true
+  validates :body, presence: true
+
+  belongs_to :category
+
+  after_create :post_log_message
+
+  private
+
+  def post_log_message
+    puts "Post created with an id of #{id}"
+  end
+end
+```
+
+So we can have different callbacks based on the validation when the record is saved, created, update, destroy. The save and create validations will only be triggered once that record.  The method above returns the id of the current record.
+
+Next insert a post at localhost:3000/posts On the server, on the terminal, we can see our new record being created and the output of
+
+```
+Post Create (2.7ms)  INSERT INTO "posts" ("title", "summary", "body", "created_at", "updated_at", "category_id") VALUES ($1, $2, $3, $4, $5, $6) RETURNING "id"  [["title", "2qwertyui"], ["summary", "asfdgh"], ["body", "dfghjk"], ["created_at", "2020-06-26 21:45:30.337655"], ["updated_at", "2020-06-26 21:45:30.337655"], ["category_id", 2]]
+↳ app/controllers/posts_controller.rb:26:in `create'
+Post created with an id of 11
+....
+```
+
+Now will instead write a new method to uodate the number of total posts in a category. We need to add a new field in the category model, which we will do in a minute. We could use category.update_attribute(:total_count, num)
+
+```
+after_create :update_totalposts_count
+
+private
+
+def update_totalposts_count
+  # update category total count column to show total posts count
+  category.update_attribute(:total_count, num)
+end
+```
+
+Another way to do it is to just increase the field for the total_count. The second attribute is 1 as we only want to increase the total_count by 1.
+
+```
+category.increment(:total_count, 1)
+```
+
+To add the new column total_count to the Category model
+
+```
+$ rails g migration add_total_count_to_categories total_count:integer
+Running via Spring preloader in process 15827
+      invoke  active_record
+      create    db/migrate/20200626220617_add_total_count_to_categories.rb
+```
+
+This created a new migration testProject/db/migrate/20200626220617_add_total_count_to_categories.rb
+
+```
+class AddTotalCountToCategories < ActiveRecord::Migration[6.0]
+  def change
+    add_column :categories, :total_count, :integer
+  end
+end
+```
+
+We can add a default value of 0 to the total_count integer
+
+```
+add_column :categories, :total_count, :integer, default: 0
+```
+
+Now we run
+
+```
+$ rails db:migrate
+== 20200626220617 AddTotalCountToCategories: migrating ========================
+-- add_column(:categories, :total_count, :integer)
+   -> 0.0423s
+== 20200626220617 AddTotalCountToCategories: migrated (0.0424s) ===============
+```
+
+In testProject/db/schema.rb we now can see that total_count column has been added to the table
+
+```  create_table "categories", force: :cascade do |t|
+    t.string "title"
+    t.string "url"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.integer "total_count"
+  end
+```
+
+Restart the server and add a post. We can see that the categories is being updated
+
+```
+Category Update (1.3ms)  UPDATE "categories" SET "total_count" = $1, "updated_at" = $2 WHERE "categories"."id" = $3  [["total_count", 1], ["updated_at", "2020-06-26 22:16:14.438136"], ["id", 2]]
+↳ app/models/post.rb:15:in `update_totalposts_count'
+ (0.6ms)  COMMIT
+```
+
+Previously in testProject/app/models/category.rb the total method is called everytime. So we will remove the total method so that category.rb now becomes
+
+```
+class Category < ApplicationRecord
+  validates_presence_of :title, :url
+  has_many :posts
+
+end
+```
+
+And in testProject/app/views/public/homepage.html.erb we change category.total to return instead the column from the database category.total_count This reduces the queries to the database
+
+```
+<p><%= category.title %> - <%= category.total_count %></p>
+```
+
 ### 46. <a name="ScopesandScopeChaining">Scopes and Scope Chaining</a>
 ### 4min
+
+Scopes allow us to create custom queries on the database. We crate them directly within the model, placing the word scope followed by the name that we are assigning to that scope such as in this case 'active' and then we pass in ablock of code as the second parameter. We are using a 'where()' clause and we ensure that teh 'active' column is true in teh model. This will pull all entries with an 'active' entry on 'true' So in testProject/app/models/post.rb
+
+```
+...
+belongs_to :category
+
+after_create :update_totalposts_count
+
+scope :active, -> { where( active: true)}
+
+private
+...
+```
+
+Now that the scope has been created it can be used in the controller testProject/app/controllers/public_controller.rb we change
+
+```
+@posts = Post.all
+```
+
+to
+
+```
+@posts = Post.active
+```
+
+So we now have
+
+```
+def homepage
+  @posts = Post.active
+  @categories = Category.all
+end
+```
+
+In the model testProject/app/models/post.rb lets create a second scope to order the data that gets returned in ascending order based on the created_at date. We are using the 'order' statement
+
+```
+scope :active, -> { where( active: true)}
+scope :order_by_latest_first, -> { order( created_at: :desc )}
+```
+
+Scopes can be chained together. This is done in the controller testProject/app/controllers/public_controller.rb
+
+```
+@posts = Post.active.order_by_latest_first
+```
+
+This changes the order of the posts. Next we create a third scope to limit the number of results that are returned. Again in testProject/app/models/post.rb It is a good idea to create scopes that only do one thing, this way they can be chained together as needed.
+
+```
+scope :active, -> { where( active: true)}
+scope :order_by_latest_first, -> { order( created_at: :desc )}
+scope :limit_2, -> { limit( 2 )}
+```
+
+Chaining the last scope in teh controller testProject/app/controllers/public_controller.rb
+
+```
+@posts = Post.active.order_by_latest_first.limit_2
+```
+
+In the browser now we will see that we are getting only two results as expected.
+
+On the server you can see the query that Rails built based on the chain of scopes that we created by only accepting entris where 'active' is 'true', ordering in descanding order and limiting the entries to 2.
+
+```
+ Post Load (1.2ms)  SELECT "posts".* FROM "posts" WHERE "posts"."active" = $1 ORDER BY "posts"."created_at" DESC LIMIT $2  [["active", true], ["LIMIT", 2]]
+```
 
 ## Section 8: Rails Console and Active Record Continued
 16min
