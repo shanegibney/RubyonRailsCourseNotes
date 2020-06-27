@@ -2740,23 +2740,433 @@ On the server you can see the query that Rails built based on the chain of scope
  Post Load (1.2ms)  SELECT "posts".* FROM "posts" WHERE "posts"."active" = $1 ORDER BY "posts"."created_at" DESC LIMIT $2  [["active", true], ["LIMIT", 2]]
 ```
 
+There is an issue at the moment creating new categories.
+
 ## Section 8: Rails Console and Active Record Continued
 16min
 
 ### 47. <a name="AccessingtheRailsConsole/SandboxMode">Accessing the Rails Console / Sandbox Mode</a>
 2min
 
+The rails console allows us to interact with the database directly from the command-line
+
+```
+$ rails console
+```
+
+or for short
+
+```
+$ rails c
+
+```
+
+Exit the rails console with
+
+```
+exit
+```
+
+We can access all data from the Post model with
+
+```
+> Post.all
+```
+
+The rails console sandbox allows you to change the data but when you exit the console all changes are reverted back
+
+```
+$ rails console --sandbox
+```
+
+To see last row of a table
+
+```
+> Category.last
+```
+
+To remove the last row of a table in the console use
+
+```
+> Category.last.destroy
+```
+
 ### 48. <a name="ActiveRecordQueries">Active Record Queries</a>
 6min
+
+Access console
+
+```
+$ rails c
+```
+
+The queries we are looking at here can be used in the model, controller and also the Rails console.
+
+To select all entries in a table
+
+```
+irb(main):002:0> Category.all
+  Category Load (27.3ms)  SELECT "categories".* FROM "categories" LIMIT $1  [["LIMIT", 11]]
+=> #<ActiveRecord::Relation [#<Category id: 5, title: "Java", url: "java", created_at: "2020-06-28 18:27:13", updated_at: "2020-06-28 18:27:13", total_count: 1>, #<Category id: 4, title: "Python", url: "python", created_at: "2020-06-28 18:27:13", updated_at: "2020-06-26 23:45:55", total_count: 3>, #<Category id: 6, title: "C++", url: "C++", created_at: "2020-06-28 18:27:13", updated_at: "2020-06-26 23:46:06", total_count: 2>]>
+```
+
+The returns data in an array which allows us to use .size
+
+```
+irb(main):003:0> Category.all.size
+   (1.0ms)  SELECT COUNT(*) FROM "categories"
+=> 3
+```
+
+To take the first entry in atable ordered by id and likewise for the lst entry in a table
+
+```
+irb(main):004:0> Category.first
+  Category Load (0.6ms)  SELECT "categories".* FROM "categories" ORDER BY "categories"."id" ASC LIMIT $1  [["LIMIT", 1]]
+=> #<Category id: 4, title: "Python", url: "python", created_at: "2020-06-28 18:27:13", updated_at: "2020-06-26 23:45:55", total_count: 3>
+```
+
+and
+
+```
+irb(main):006:0> Category.last
+  Category Load (0.3ms)  SELECT "categories".* FROM "categories" ORDER BY "categories"."id" DESC LIMIT $1  [["LIMIT", 1]]
+=> #<Category id: 6, title: "C++", url: "C++", created_at: "2020-06-28 18:27:13", updated_at: "2020-06-26 23:46:06", total_count: 2>
+
+```
+
+To see what columns are available for a specific table
+
+```
+irb(main):007:0> Category.new
+=> #<Category id: nil, title: nil, url: nil, created_at: nil, updated_at: nil, total_count: nil>
+```
+
+Using the name of a column such as 'craetaed_at' and chaining it on the end of another queries
+
+```
+irb(main):008:0> Category.last.created_at
+  Category Load (0.5ms)  SELECT "categories".* FROM "categories" ORDER BY "categories"."id" DESC LIMIT $1  [["LIMIT", 1]]
+=> Sun, 28 Jun 2020 18:27:13 UTC +00:00
+```
+
+Select an item from the table based on id
+
+```
+irb(main):019:0> Category.find(5)
+  Category Load (0.4ms)  SELECT "categories".* FROM "categories" WHERE "categories"."id" = $1 LIMIT $2  [["id", 5], ["LIMIT", 1]]
+=> #<Category id: 5, title: "Java", url: "java", created_at: "2020-06-28 18:27:13", updated_at: "2020-06-28 18:27:13", total_count: 1>
+```
+
+Find table rows based a value in a specific column such as the row where the title is "Java"
+
+```
+irb(main):022:0> Category.find_by_title("C++")
+  Category Load (0.4ms)  SELECT "categories".* FROM "categories" WHERE "categories"."title" = $1 LIMIT $2  [["title", "C++"], ["LIMIT", 1]]
+=> #<Category id: 6, title: "C++", url: "C++", created_at: "2020-06-28 18:27:13", updated_at: "2020-06-26 23:46:06", total_count: 2>
+```
+
+In postgres I added another row to the Categories table.
+
+```
+$ psql -d postgres -U  shanegibney -W
+postgres=# insert into categories (title, url, created_at, updated_at, total_count ) values ('C++', 'C++', '2020-06-28 18:29:13.621274', '2020-06-28 18:29:13.621274',2);
+INSERT 0 1
+```
+
+Appears to only give the first instnce and only one instance of a row where the "title" is "Python"
+
+The .where() statement allows us return several rows
+
+```
+irb(main):024:0> Category.where(title: "C++")
+  Category Load (0.4ms)  SELECT "categories".* FROM "categories" WHERE "categories"."title" = $1 LIMIT $2  [["title", "C++"], ["LIMIT", 11]]
+=> #<ActiveRecord::Relation [#<Category id: 6, title: "C++", url: "C++", created_at: "2020-06-28 18:27:13", updated_at: "2020-06-26 23:46:06", total_count: 2>, #<Category id: 7, title: "C++", url: "C++", created_at: "2020-06-28 18:29:13", updated_at: "2020-06-28 18:29:13", total_count: 2>]>
+```
+
+Return rows based on an id value from an array
+
+```
+irb(main):028:0> Category.where(id: [3,5,6,7,10])
+  Category Load (0.5ms)  SELECT "categories".* FROM "categories" WHERE "categories"."id" IN ($1, $2, $3, $4, $5) LIMIT $6  [["id", 3], ["id", 5], ["id", 6], ["id", 7], ["id", 10], ["LIMIT", 11]]
+=> #<ActiveRecord::Relation [#<Category id: 5, title: "Java", url: "java", created_at: "2020-06-28 18:27:13", updated_at: "2020-06-28 18:27:13", total_count: 1>, #<Category id: 6, title: "C++", url: "C++", created_at: "2020-06-28 18:27:13", updated_at: "2020-06-26 23:46:06", total_count: 2>, #<Category id: 7, title: "C++", url: "C++", created_at: "2020-06-28 18:29:13", updated_at: "2020-06-28 18:29:13", total_count: 2>]>
+```
+
+The above statement can resut in rows not being ordered by id. For descending order use 'desc' and for ascending order use 'asc'. Ascending means that the lowest id is returned first
+
+```
+irb(main):029:0> Category.where(id: [3,6,7,8,9]).order(id: :asc)
+  Category Load (0.6ms)  SELECT "categories".* FROM "categories" WHERE "categories"."id" IN ($1, $2, $3, $4, $5) ORDER BY "categories"."id" ASC LIMIT $6  [["id", 3], ["id", 6], ["id", 7], ["id", 8], ["id", 9], ["LIMIT", 11]]
+=> #<ActiveRecord::Relation [#<Category id: 6, title: "C++", url: "C++", created_at: "2020-06-28 18:27:13", updated_at: "2020-06-26 23:46:06", total_count: 2>, #<Category id: 7, title: "C++", url: "C++", created_at: "2020-06-28 18:29:13", updated_at: "2020-06-28 18:29:13", total_count: 2>]>
+```
+
+We can write custom queries based on SQL
+
+```
+irb(main):030:0>  Category.where("title = ?", "C++")
+  Category Load (2.5ms)  SELECT "categories".* FROM "categories" WHERE (title = 'C++') LIMIT $1  [["LIMIT", 11]]
+=> #<ActiveRecord::Relation [#<Category id: 6, title: "C++", url: "C++", created_at: "2020-06-28 18:27:13", updated_at: "2020-06-26 23:46:06", total_count: 2>, #<Category id: 7, title: "C++", url: "C++", created_at: "2020-06-28 18:29:13", updated_at: "2020-06-28 18:29:13", total_count: 2>]>
+```
+
+Category has been updated and now it is
+
+```
+irb(main):041:0> Category.all
+  Category Load (0.4ms)  SELECT "categories".* FROM "categories" LIMIT $1  [["LIMIT", 11]]
+=> #<ActiveRecord::Relation [#<Category id: 5, title: "Java", url: "java", created_at: "2020-06-28 18:27:13", updated_at: "2020-06-28 18:27:13", total_count: 1>, #<Category id: 4, title: "Python", url: "python", created_at: "2020-06-28 18:27:13", updated_at: "2020-06-26 23:45:55", total_count: 3>, #<Category id: 6, title: "C++", url: "C++", created_at: "2020-06-28 18:27:13", updated_at: "2020-06-26 23:46:06", total_count: 2>, #<Category id: 7, title: "C++", url: "C++", created_at: "2020-06-28 18:29:13", updated_at: "2020-06-28 18:29:13", total_count: 2>, #<Category id: 8, title: "Java", url: "Java", created_at: "2020-06-20 18:29:13", updated_at: "2020-06-20 18:29:13", total_count: 2>, #<Category id: 9, title: "Java", url: "Java", created_at: "2020-06-27 10:29:13", updated_at: "2020-06-27 10:29:13", total_count: 2>, #<Category id: 10, title: "Java", url: "Java", created_at: "2020-06-19 10:29:13", updated_at: "2020-06-19 10:29:13", total_count: 2>]>
+```
+
+Using this custom query to get a crated_at date that is one hour ago, a day ago or a week ago
+
+```
+irb(main):050:0> Category.where("created_at < ?", 1.hour.ago)
+  Category Load (0.7ms)  SELECT "categories".* FROM "categories" WHERE (created_at < '2020-06-27 13:34:07.040499') LIMIT $1  [["LIMIT", 11]]
+=> #<ActiveRecord::Relation [#<Category id: 8, title: "Java", url: "Java", created_at: "2020-06-20 18:29:13", updated_at: "2020-06-20 18:29:13", total_count: 2>, #<Category id: 9, title: "Java", url: "Java", created_at: "2020-06-27 10:29:13", updated_at: "2020-06-27 10:29:13", total_count: 2>, #<Category id: 10, title: "Java", url: "Java", created_at: "2020-06-19 10:29:13", updated_at: "2020-06-19 10:29:13", total_count: 2>]>
+irb(main):051:0> Category.where("created_at < ?", 1.day.ago)
+  Category Load (0.4ms)  SELECT "categories".* FROM "categories" WHERE (created_at < '2020-06-26 14:34:14.092594') LIMIT $1  [["LIMIT", 11]]
+=> #<ActiveRecord::Relation [#<Category id: 8, title: "Java", url: "Java", created_at: "2020-06-20 18:29:13", updated_at: "2020-06-20 18:29:13", total_count: 2>, #<Category id: 10, title: "Java", url: "Java", created_at: "2020-06-19 10:29:13", updated_at: "2020-06-19 10:29:13", total_count: 2>]>
+irb(main):052:0> Category.where("created_at < ?", 1.week.ago)
+  Category Load (0.5ms)  SELECT "categories".* FROM "categories" WHERE (created_at < '2020-06-20 14:34:21.596062') LIMIT $1  [["LIMIT", 11]]
+=> #<ActiveRecord::Relation [#<Category id: 10, title: "Java", url: "Java", created_at: "2020-06-19 10:29:13", updated_at: "2020-06-19 10:29:13", total_count: 2>]>
+irb(main):053:0> irb(main):050:0> Category.where("created_at < ?" "Java", url: "Java", created_at: "2020-06-19 10:29:13", updated_at: "2020-06-19 10:29:13", total_count: 2>]>
+irb(main):052:0> Category.where("created_at < ?", 1.week.ago)
+```
+
+In Rails you can also
+
+```
+Category.where("created_at < ?", 1.hour.from_now)
+```
+
+So what is the difference between 'from_now' and 'ago'?
+
+Next we will select id values that in the array and have a title of "C++"
+
+```
+irb(main):004:0> Category.where(id: [5,6,7], title: "C++")
+  Category Load (0.9ms)  SELECT "categories".* FROM "categories" WHERE "categories"."id" IN ($1, $2, $3) AND "categories"."title" = $4 LIMIT $5  [["id", 5], ["id", 6], ["id", 7], ["title", "C++"], ["LIMIT", 11]]
+=> #<ActiveRecord::Relation [#<Category id: 6, title: "C++", url: "C++", created_at: "2020-06-28 18:27:13", updated_at: "2020-06-26 23:46:06", total_count: 2>, #<Category id: 7, title: "C++", url: "C++", created_at: "2020-06-28 18:29:13", updated_at: "2020-06-28 18:29:13", total_count: 2>]>
+```
+
+Building a query based on values that are not present use '.where.not()'
+
+```
+irb(main):005:0> Category.where.not(title: "C++")
+  Category Load (0.3ms)  SELECT "categories".* FROM "categories" WHERE "categories"."title" != $1 LIMIT $2  [["title", "C++"], ["LIMIT", 11]]
+=> #<ActiveRecord::Relation [#<Category id: 5, title: "Java", url: "java", created_at: "2020-06-28 18:27:13", updated_at: "2020-06-28 18:27:13", total_count: 1>, #<Category id: 4, title: "Python", url: "python", created_at: "2020-06-28 18:27:13", updated_at: "2020-06-26 23:45:55", total_count: 3>, #<Category id: 8, title: "Java", url: "Java", created_at: "2020-06-20 18:29:13", updated_at: "2020-06-20 18:29:13", total_count: 2>, #<Category id: 9, title: "Java", url: "Java", created_at: "2020-06-27 10:29:13", updated_at: "2020-06-27 10:29:13", total_count: 2>, #<Category id: 10, title: "Java", url: "Java", created_at: "2020-06-19 10:29:13", updated_at: "2020-06-19 10:29:13", total_count: 2>]>
+```
 
 ### 49. <a name="CreatingNewDatabaseEntriesfromRailsConsole">Creating New Database Entries from Rails Console</a>
 3min
 
+Creating new entries in our database from the Rails console. Category.new allows us to see all the column names for the model.
+
+```
+irb(main):007:0> Category.new
+=> #<Category id: nil, title: nil, url: nil, created_at: nil, updated_at: nil, total_count: nil>
+```
+
+We can now assign this to a variable called 'var'. This will allow us to pass the values for each column individually. We can create a new entry for title of "PHP"
+
+```
+=> #<Category id: nil, title: nil, url: nil, created_at: nil, updated_at: nil, total_count: nil>
+irb(main):008:0> var = Category.new
+```
+
+We can assign ech column a value
+
+```
+irb(main):009:0> var.title = "PHP"  
+irb(main):010:0> var.url= "php"
+```
+
+Next print out that variable 'var'
+
+```
+irb(main):011:0> var
+=> #<Category id: nil, title: "PHP", url: "php", created_at: nil, updated_at: nil, total_count: nil>
+```
+
+Check that all those are valid, such as that they are strings or integers as they should be
+
+```
+irb(main):013:0> var.valid?
+=> true
+```
+
+Then save them to the database with .save
+
+```
+irb(main):012:0> var.save
+   (0.3ms)  BEGIN
+  Category Create (0.5ms)  INSERT INTO "categories" ("title", "url", "created_at", "updated_at") VALUES ($1, $2, $3, $4) RETURNING "id"  [["title", "PHP"], ["url", "php"], ["created_at", "2020-06-27 15:10:07.752979"], ["updated_at", "2020-06-27 15:10:07.752979"]]
+   (2.0ms)  COMMIT
+=> true
+```
+
+Confirm that it has been saved
+
+```
+irb(main):014:0> Category.last
+  Category Load (0.3ms)  SELECT "categories".* FROM "categories" ORDER BY "categories"."id" DESC LIMIT $1  [["LIMIT", 1]]
+=> #<Category id: 11, title: "PHP", url: "php", created_at: "2020-06-27 15:10:07", updated_at: "2020-06-27 15:10:07", total_count: nil>
+```
+
+Another way to add new entry values to the database
+
+```
+irb(main):015:0>  Category.create(title: "React JS", url: "react-js")
+   (0.4ms)  BEGIN
+  Category Create (0.6ms)  INSERT INTO "categories" ("title", "url", "created_at", "updated_at") VALUES ($1, $2, $3, $4) RETURNING "id"  [["title", "React JS"], ["url", "react-js"], ["created_at", "2020-06-27 15:17:28.684088"], ["updated_at", "2020-06-27 15:17:28.684088"]]
+   (0.4ms)  COMMIT
+=> #<Category id: 12, title: "React JS", url: "react-js", created_at: "2020-06-27 15:17:28", updated_at: "2020-06-27 15:17:28", total_count: nil>
+```
+
+Add one column of data and see what happens when we check validation
+
+```
+irb(main):016:0> var = Category.new(title: "Elixir")
+irb(main):017:0> var.valid?
+=> false
+```
+
+If you try to save it will not work as this entry is not valid because there is no value for 'url'
+
+```
+irb(main):019:0> var.save
+=> false
+```
+
+By adding an exclamation mark we can get the validation reasons for not saving
+
+```
+irb(main):020:0> var.save!
+Traceback (most recent call last):
+        1: from (irb):20
+ActiveRecord::RecordInvalid (Validation failed: Url can't be blank)
+```
+
+Next polulate that column
+
+```
+irb(main):027:0> var.save
+   (0.2ms)  BEGIN
+  Category Create (0.4ms)  INSERT INTO "categories" ("title", "url", "created_at", "updated_at") VALUES ($1, $2, $3, $4) RETURNING "id"  [["title", "Elixir"], ["url", "elixir"], ["created_at", "2020-06-27 15:26:54.052222"], ["updated_at", "2020-06-27 15:26:54.052222"]]
+   (0.6ms)  COMMIT
+=> true
+```
+
 ### 50. <a name="EditingandDestroyingDatabaseEntries">Editing and Destroying Database Entries</a>
 5min
 
+How to update and destroy data.
+
+First let us look at the stae of the data in the table 'category'
+
+```
+irb(main):028:0> Category.all
+  Category Load (2.1ms)  SELECT "categories".* FROM "categories" LIMIT $1  [["LIMIT", 11]]
+=> #<ActiveRecord::Relation [#<Category id: 5, title: "Java", url: "java", created_at: "2020-06-28 18:27:13", updated_at: "2020-06-28 18:27:13", total_count: 1>, #<Category id: 4, title: "Python", url: "python", created_at: "2020-06-28 18:27:13", updated_at: "2020-06-26 23:45:55", total_count: 3>, #<Category id: 6, title: "C++", url: "C++", created_at: "2020-06-28 18:27:13", updated_at: "2020-06-26 23:46:06", total_count: 2>, #<Category id: 7, title: "C++", url: "C++", created_at: "2020-06-28 18:29:13", updated_at: "2020-06-28 18:29:13", total_count: 2>, #<Category id: 8, title: "Java", url: "Java", created_at: "2020-06-20 18:29:13", updated_at: "2020-06-20 18:29:13", total_count: 2>, #<Category id: 9, title: "Java", url: "Java", created_at: "2020-06-27 10:29:13", updated_at: "2020-06-27 10:29:13", total_count: 2>, #<Category id: 10, title: "Java", url: "Java", created_at: "2020-06-19 10:29:13", updated_at: "2020-06-19 10:29:13", total_count: 2>, #<Category id: 11, title: "PHP", url: "php", created_at: "2020-06-27 15:10:07", updated_at: "2020-06-27 15:10:07", total_count: nil>, #<Category id: 12, title: "React JS", url: "react-js", created_at: "2020-06-27 15:17:28", updated_at: "2020-06-27 15:17:28", total_count: nil>, #<Category id: 13, title: "Elixir", url: "elixir", created_at: "2020-06-27 15:26:54", updated_at: "2020-06-27 15:26:54", total_count: nil>]>
+```
+
+To update a column of 'url' on the last entry of the Category model
+
+```
+irb(main):030:0> Category.last.update_attribute(:url, "elixir-lang")
+  Category Load (0.5ms)  SELECT "categories".* FROM "categories" ORDER BY "categories"."id" DESC LIMIT $1  [["LIMIT", 1]]
+   (0.4ms)  BEGIN
+  Category Update (8.1ms)  UPDATE "categories" SET "url" = $1, "updated_at" = $2 WHERE "categories"."id" = $3  [["url", "elixir-lang"], ["updated_at", "2020-06-27 18:27:21.779973"], ["id", 13]]
+   (0.6ms)  COMMIT
+=> true
+```
+
+Updating multiple columns at once can be done using the .update() method
+
+```
+irb(main):031:0>  Category.last.update(title: "Elixit language", url: "elxiir-language")
+  Category Load (0.4ms)  SELECT "categories".* FROM "categories" ORDER BY "categories"."id" DESC LIMIT $1  [["LIMIT", 1]]
+   (0.2ms)  BEGIN
+  Category Update (0.5ms)  UPDATE "categories" SET "title" = $1, "url" = $2, "updated_at" = $3 WHERE "categories"."id" = $4  [["title", "Elixit language"], ["url", "elxiir-language"], ["updated_at", "2020-06-27 18:30:56.433761"], ["id", 13]]
+   (2.0ms)  COMMIT
+=> true
+```
+
+We will use the Category.update_all() and this could be used with conditions useing .where() like this
+
+```
+Category.where(...).update_all(...)
+```
+
+```
+irb(main):032:0>  Category.update_all(total_count: 0)
+  Category Update All (9.4ms)  UPDATE "categories" SET "total_count" = $1  [["total_count", 0]]
+=> 10
+```
+
+Next we will create a variable and assign the first category to that variable and then use it to update values and don't forget to .save to update the database
+
+```
+irb(main):033:0> var = Category.first
+  Category Load (0.5ms)  SELECT "categories".* FROM "categories" ORDER BY "categories"."id" ASC LIMIT $1  [["LIMIT", 1]]
+irb(main):034:0> var.total_count = 5
+irb(main):035:0> var.url =  "UuRrLl"
+irb(main):036:0> var.save
+   (0.2ms)  BEGIN
+  Category Update (0.5ms)  UPDATE "categories" SET "total_count" = $1, "url" = $2, "updated_at" = $3 WHERE "categories"."id" = $4  [["total_count", 5], ["url", "UuRrLl"], ["updated_at", "2020-06-27 19:43:39.691070"], ["id", 4]]
+   (2.1ms)  COMMIT
+=> true
+```
+
+To destroy entries we can use the .destroy_all() method which is a lot like the .update_all() method. The format is
+
+```
+Category.where(...).destroy_all
+```
+
+We can filter methods by id
+
+```
+irb(main):037:0> Category.find(7)
+  Category Load (0.7ms)  SELECT "categories".* FROM "categories" WHERE "categories"."id" = $1 LIMIT $2  [["id", 7], ["LIMIT", 1]]
+=> #<Category id: 7, title: "C++", url: "C++", created_at: "2020-06-28 18:29:13", updated_at: "2020-06-28 18:29:13", total_count: 0>
+```
+
+This can then be used with .destroy() to delete a single record
+
+```
+irb(main):038:0> Category.find(7).destroy
+  Category Load (0.4ms)  SELECT "categories".* FROM "categories" WHERE "categories"."id" = $1 LIMIT $2  [["id", 7], ["LIMIT", 1]]
+   (0.2ms)  BEGIN
+  Category Destroy (20.6ms)  DELETE FROM "categories" WHERE "categories"."id" = $1  [["id", 7]]
+   (0.6ms)  COMMIT
+=> #<Category id: 7, title: "C++", url: "C++", created_at: "2020-06-28 18:29:13", updated_at: "2020-06-28 18:29:13", total_count: 0>
+```
+
+As you can see the data deleted is returned.
+
+Destroying data with a where condition
+
+```
+irb(main):045:0> Category.where("created_at > ?",  12.hour.ago).destroy_all
+  Category Load (0.4ms)  SELECT "categories".* FROM "categories" WHERE (created_at > '2020-06-27 08:02:08.430389')
+   (0.2ms)  BEGIN
+  Category Destroy (0.5ms)  DELETE FROM "categories" WHERE "categories"."id" = $1  [["id", 5]]
+   (1.9ms)  COMMIT
+   (0.3ms)  BEGIN
+  Category Destroy (8.2ms)  DELETE FROM "categories" WHERE "categories"."id" = $1  [["id", 6]]
+   (0.3ms)  ROLLBACK
+Traceback (most recent call last):
+        1: from (irb):45
+ActiveRecord::InvalidForeignKey (PG::ForeignKeyViolation: ERROR:  update or delete on table "categories" violates foreign key constraint "fk_rails_9b1b26f040" on table "posts")
+DETAIL:  Key (id)=(6) is still referenced from table "posts".
+```
+
+In this case this is not working because there is a foreign_key constraint issue.
+
 ## Section 9: Managing Assets, Views and Helpers
 35min
+
+
 
 ### 51. <a name="AssetPiplineWebpackerandYarn">Asset Pipline Webpacker and Yarn</a>
 5min
